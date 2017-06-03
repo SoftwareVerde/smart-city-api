@@ -53,8 +53,11 @@ def is_number(s):
         return False
 
 def geocode_address(location):
-    r = requests.get("https://maps.googleapis.com/maps/api/geocode/json?address="+ location)
+    api_token="AIzaSyACxY0gd_t0J3lrT3Da77_ExWaGT2nChZQ"
+    r = requests.get("https://maps.googleapis.com/maps/api/geocode/json?address="+ location +"&key="+ api_token)
     json = r.json()
+    if (len(json['results']) == 0):
+        return (None, None)
     return (json['results'][0]['geometry']['location']['lat'], json['results'][0]['geometry']['location']['lng'])
 
 connection = MySQLdb.connect(user='root', passwd='absolution', host='127.0.0.1', db='smart_city_api')
@@ -73,44 +76,23 @@ def create_query(row):
     amount_due = row[8].strip()
     disposition = row[9].strip()
 
-    location = original_location
-    match = re.search('^([0-9]+ )(.*)', location, re.IGNORECASE)
-    if (match != None):
-        first_word = match.group(1)
-        location = match.group(2).strip()
+    if (len(total_fine) < 1):
+        total_fine = "0.00"
+    if (len(fine_paid) < 1):
+        fine_paid = "0.00"
+    if (len(amount_due) < 1):
+        amount_due = "0.00"
 
     cursor = connection.cursor()
-    cursor.execute("SELECT location FROM parking_meters GROUP BY location")
+    cursor.execute("SELECT id FROM parking_tickets WHERE ticket_number = %s", (ticket_number, ))
     row = cursor.fetchone()
-    best_match_location = None
-    best_match_score = sys.maxint
-    while (row != None):
-        row_location = row[0]
-        score = levenshtein(row_location, location)
-        if (score < best_match_score):
-            best_match_score = score
-            best_match_location = row_location
-        row = cursor.fetchone()
-
-    # if (best_match_score > 5):
-    #     print("Failed to match: {}".format(location))
-    # print("{} matched to {} (score: {})".format(location, best_match_location, best_match_score))
-    if (best_match_score < 6):
-        latlng = geocode_address(original_location)
-        best_match = find_closest_meter_id(latlng[0], latlng[1])
-    else:
-        # print("Not A Meter: {}".format(original_location))
+    if (row is not None): # Ticket already processed...
+        cursor.close()
         return
 
-
-    best_match = None
-    if (best_match is None):
-        print("No match for: "+ location)
-        cursor.close()
-        return None
-
-    parking_meter_id = best_match
-    cursor.close()
+    latlng = geocode_address(original_location)
+    latitude = latlng[0]
+    longitude = latlng[1]
 
     cursor = connection.cursor()
     cursor.execute("SELECT id FROM license_plates WHERE number = %s AND state = %s", (plate_number, plate_state))
@@ -118,19 +100,34 @@ def create_query(row):
     if (row == None):
         cursor.execute("INSERT INTO license_plates (number, state) VALUES (%s, %s)", (plate_number, plate_state))
         license_plate_id = cursor.lastrowid
+        connection.commit()
     else:
         license_plate_id = row[0]
-
     cursor.close()
 
-    query = "INSERT INTO parking_tickets (date, ticket_number, license_plate_id, parking_meter_id, violation_code, fine_amount, paid_amount, due_amount, disposition) VALUES ('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}');"
-    return query.format(date, ticket_number, license_plate_id, parking_meter_id, violation_code, total_fine, fine_paid, amount_due, disposition)
-    
+    query = "INSERT INTO parking_tickets (date, ticket_number, license_plate_id, violation_code, fine_amount, paid_amount, due_amount, disposition, latitude, longitude) VALUES ('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}');"
+    print(query.format(date, ticket_number, license_plate_id, violation_code, total_fine, fine_paid, amount_due, disposition, latitude, longitude))
+
+    cursor = connection.cursor()
+    cursor.execute("INSERT INTO parking_tickets (date, ticket_number, license_plate_id, violation_code, fine_amount, paid_amount, due_amount, disposition, latitude, longitude) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", (date, ticket_number, license_plate_id, violation_code, total_fine, fine_paid, amount_due, disposition, latitude, longitude))
+    connection.commit()
+    cursor.close()
 
 with open('tickets.csv', 'rb') as csvfile:
+    max_count = 50000
+    i = 0
+    skip_to = 0
+
     csv_reader = csv.reader(csvfile, delimiter=';')
     for row in csv_reader:
+        if (i < skip_to):
+            i += 1
+            continue
+        if (i - skip_to >= max_count):
+            print("Max Count Reached: "+ i)
+            break
         create_query(row)
-        # print(create_query(row))
+        i += 1
 
 connection.close()
+
