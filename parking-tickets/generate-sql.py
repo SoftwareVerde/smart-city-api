@@ -53,17 +53,23 @@ def is_number(s):
         return False
 
 def geocode_address(location):
+    location = location.strip() + " Columbus, OH"
+    bounds = "40.144199,-83.232535|39.833732,-82.780525"
     api_token="AIzaSyACxY0gd_t0J3lrT3Da77_ExWaGT2nChZQ"
-    r = requests.get("https://maps.googleapis.com/maps/api/geocode/json?address="+ location +"&key="+ api_token)
+    r = requests.get("https://maps.googleapis.com/maps/api/geocode/json?address="+ location +"&bounds="+ bounds +"&key="+ api_token)
     json = r.json()
     if (len(json['results']) == 0):
+        print(json)
         return (None, None)
     return (json['results'][0]['geometry']['location']['lat'], json['results'][0]['geometry']['location']['lng'])
 
 connection = MySQLdb.connect(user='root', passwd='absolution', host='127.0.0.1', db='smart_city_api')
 
+skip_count = 0
+
 def create_query(row):
     global connection
+    global skip_count
 
     date = parse(row[0].strip()).strftime('%Y-%m-%d');
     ticket_number = row[1].strip()
@@ -88,6 +94,9 @@ def create_query(row):
     row = cursor.fetchone()
     if (row is not None): # Ticket already processed...
         cursor.close()
+        skip_count += 1
+        print("Skipping. {}".format(skip_count))
+        sys.stdout.write("\033[F")
         return
 
     latlng = geocode_address(original_location)
@@ -105,18 +114,19 @@ def create_query(row):
         license_plate_id = row[0]
     cursor.close()
 
-    query = "INSERT INTO parking_tickets (date, ticket_number, license_plate_id, violation_code, fine_amount, paid_amount, due_amount, disposition, latitude, longitude) VALUES ('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}');"
-    print(query.format(date, ticket_number, license_plate_id, violation_code, total_fine, fine_paid, amount_due, disposition, latitude, longitude))
+    # query = "INSERT INTO parking_tickets (date, ticket_number, license_plate_id, violation_code, fine_amount, paid_amount, due_amount, disposition, latitude, longitude, location) VALUES ('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}');"
+    query = "(date, ticket_number, license_plate_id, violation_code, fine_amount, paid_amount, due_amount, disposition, latitude, longitude, location) VALUES ('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}');"
+    print(query.format(date, ticket_number, license_plate_id, violation_code, total_fine, fine_paid, amount_due, disposition, latitude, longitude, original_location))
 
     cursor = connection.cursor()
-    cursor.execute("INSERT INTO parking_tickets (date, ticket_number, license_plate_id, violation_code, fine_amount, paid_amount, due_amount, disposition, latitude, longitude) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", (date, ticket_number, license_plate_id, violation_code, total_fine, fine_paid, amount_due, disposition, latitude, longitude))
+    cursor.execute("INSERT INTO parking_tickets (date, ticket_number, license_plate_id, violation_code, fine_amount, paid_amount, due_amount, disposition, latitude, longitude, location) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", (date, ticket_number, license_plate_id, violation_code, total_fine, fine_paid, amount_due, disposition, latitude, longitude, original_location))
     connection.commit()
     cursor.close()
 
 with open('tickets.csv', 'rb') as csvfile:
     max_count = 50000
     i = 0
-    skip_to = 0
+    skip_to = 99999
 
     csv_reader = csv.reader(csvfile, delimiter=';')
     for row in csv_reader:
@@ -124,7 +134,7 @@ with open('tickets.csv', 'rb') as csvfile:
             i += 1
             continue
         if (i - skip_to >= max_count):
-            print("Max Count Reached: "+ i)
+            print("Max Count Reached: {}".format(i))
             break
         create_query(row)
         i += 1
