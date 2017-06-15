@@ -1,4 +1,4 @@
-package com.softwareverde.example;
+package com.softwareverde.smartcity;
 
 import com.softwareverde.util.Util;
 

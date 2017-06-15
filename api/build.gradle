@@ -9,7 +9,7 @@ task makeJar(type: Jar) {
     manifest {
         attributes  'Implementation-Title': 'Http Servlet Example',
                     'Implementation-Version': version,
-                    'Main-Class': 'com.softwareverde.example.Main'
+                    'Main-Class': 'com.softwareverde.smartcity.Main'
     }
     baseName = project.name + '-server'
     from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
@@ -22,7 +22,7 @@ repositories {
 }
 
 dependencies {
-    compile group: 'com.github.softwareverde', name: 'java-db-mysql', version: 'v1.+'
+    compile group: 'com.github.softwareverde', name: 'java-db-mysql', version: 'v2.+'
     compile group: 'com.github.softwareverde', name: 'http-servlet', version: 'v1.+'
     compile group: 'com.github.softwareverde', name: 'java-socket', version: 'v0.+'
 

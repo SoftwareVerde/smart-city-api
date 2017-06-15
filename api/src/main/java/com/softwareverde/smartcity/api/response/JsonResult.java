@@ -1,4 +1,4 @@
-package com.softwareverde.example.api.response;
+package com.softwareverde.smartcity.api.response;
 
 import com.softwareverde.json.Json;
 import com.softwareverde.json.Jsonable;
@@ -24,7 +24,7 @@ public class JsonResult implements Jsonable {
     @Override
     public Json toJson() {
         final Json json = new Json();
-        json.put("wasSuccess", (_wasSuccess ? 1 : 0));
+        json.put("wasSuccess", _wasSuccess);
         json.put("errorMessage", _errorMessage);
         return json;
     }

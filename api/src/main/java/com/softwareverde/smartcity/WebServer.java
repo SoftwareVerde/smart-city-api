@@ -1,16 +1,16 @@
-package com.softwareverde.example;
+package com.softwareverde.smartcity;
 
-import com.softwareverde.database.Database;
-import com.softwareverde.example.api.servertime.ServerTimeApi;
 import com.softwareverde.httpserver.DirectoryServlet;
 import com.softwareverde.httpserver.HttpServer;
 import com.softwareverde.httpserver.endpoint.Endpoint;
+import com.softwareverde.smartcity.api.parkingmeter.ParkingMeterApi;
+import com.softwareverde.smartcity.environment.Environment;
 
 import java.io.File;
 
 public class WebServer {
     private final Configuration.ServerProperties _serverProperties;
-    private final Database _database;
+    private final Environment _environment;
 
     private final HttpServer _apiServer = new HttpServer();
 
@@ -19,9 +19,9 @@ public class WebServer {
         _apiServer.addEndpoint(path, apiEndpoint);
     }
 
-    public WebServer(final Configuration.ServerProperties serverProperties, final Database database) {
+    public WebServer(final Configuration.ServerProperties serverProperties, final Environment environment) {
         _serverProperties = serverProperties;
-        _database = database;
+        _environment = environment;
     }
 
     public void start() {
@@ -32,11 +32,11 @@ public class WebServer {
         _apiServer.enableEncryption(true);
         _apiServer.redirectToTls(false);
 
-        { // Server Time Api
-            // Path:                /api/server/time
+        { // Parking Meters Api
+            // Path:                /api/v1/parking-meters/?list
             // GET (Methods):       select
             // POST (Parameters):
-            _assignEndpoint("/api/parking-meters/", new ServerTimeApi());
+            _assignEndpoint("/api/v1/parking-meters", new ParkingMeterApi(_environment));
         }
 
         { // Static Content

@@ -1,9 +1,12 @@
-package com.softwareverde.example;
+package com.softwareverde.smartcity;
 
 import com.softwareverde.database.Database;
+import com.softwareverde.database.DatabaseException;
 import com.softwareverde.database.mysql.MysqlDatabase;
+import com.softwareverde.smartcity.environment.Environment;
 
 import java.io.File;
+import java.sql.Connection;
 
 public class Main {
     private static void _exitFailure() {
@@ -18,16 +21,19 @@ public class Main {
         _printError("Usage: java -jar " + System.getProperty("java.class.path") + " <configuration-file>");
     }
 
-    private static Database _loadDatabase(final Configuration.DatabaseProperties databaseProperties) {
+    private static Database<Connection> _loadDatabase(final Configuration.DatabaseProperties databaseProperties) {
         final MysqlDatabase database = new MysqlDatabase(
             databaseProperties.getConnectionUrl(),
             databaseProperties.getUsername(),
             databaseProperties.getPassword()
         );
 
-        database.setDatabase(databaseProperties.getSchema());
-
-        database.connect();
+        try {
+            database.setDatabase(databaseProperties.getSchema());
+        }
+        catch (final DatabaseException e) {
+            return null;
+        }
 
         return database;
     }
@@ -51,16 +57,18 @@ public class Main {
         final String configurationFilename = commandLineArguments[0];
 
         final Configuration configuration = _loadConfigurationFile(configurationFilename);
-        final Database database = _loadDatabase(configuration.getDatabaseProperties());
-        if (! database.isConnected()) {
+        final Database<Connection> database = _loadDatabase(configuration.getDatabaseProperties());
+        if (database == null) {
             _printError("[NOTICE: Unable to connect to database.]");
-            // _exitFailure();
+            _exitFailure();
         }
+
+        final Environment environment = new Environment(database);
 
         final Configuration.ServerProperties serverProperties = configuration.getServerProperties();
 
         System.out.println("[Starting Web Server]");
-        final WebServer webServer = new WebServer(serverProperties, database);
+        final WebServer webServer = new WebServer(serverProperties, environment);
         webServer.start();
 
         System.out.println("[Server Online]");
