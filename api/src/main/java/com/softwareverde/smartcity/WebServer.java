@@ -32,12 +32,7 @@ public class WebServer {
         _apiServer.enableEncryption(true);
         _apiServer.redirectToTls(false);
 
-        { // Parking Meters Api
-            // Path:                /api/v1/parking-meters/?list
-            // GET (Methods):       select
-            // POST (Parameters):
-            _assignEndpoint("/api/v1/parking-meters", new ParkingMeterApi(_environment));
-        }
+        _assignEndpoint("/api/v1/parking-meters", new ParkingMeterApi(_environment));
 
         { // Static Content
             final File servedDirectory = new File(_serverProperties.getRootDirectory() +"/");
