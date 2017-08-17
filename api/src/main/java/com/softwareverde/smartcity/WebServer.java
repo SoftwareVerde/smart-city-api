@@ -5,7 +5,7 @@ import com.softwareverde.httpserver.HttpServer;
 import com.softwareverde.servlet.Endpoint;
 import com.softwareverde.servlet.Servlet;
 import com.softwareverde.smartcity.api.parkingmeter.ParkingMeterApi;
-import com.softwareverde.smartcity.api.parkingmeter.ParkingTicketApi;
+import com.softwareverde.smartcity.api.parkingticket.ParkingTicketApi;
 import com.softwareverde.smartcity.environment.Environment;
 
 import java.io.File;

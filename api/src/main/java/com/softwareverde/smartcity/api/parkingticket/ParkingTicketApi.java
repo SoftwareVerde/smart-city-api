@@ -1,4 +1,4 @@
-package com.softwareverde.smartcity.api.parkingmeter;
+package com.softwareverde.smartcity.api.parkingticket;
 
 import com.softwareverde.servlet.Servlet;
 import com.softwareverde.servlet.request.Request;
