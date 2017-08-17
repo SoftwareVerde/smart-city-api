@@ -55,7 +55,7 @@ def is_number(s):
 def geocode_address(location):
     location = location.strip() + " Columbus, OH"
     bounds = "40.144199,-83.232535|39.833732,-82.780525"
-    api_token="AIzaSyACxY0gd_t0J3lrT3Da77_ExWaGT2nChZQ"
+    api_token="AIzaSyACxY0gd_t0J3lrT3Da77_ExWaGT2nChZQ" # Restricted via IP. Key Disabled 2017-08-17. # Manage Key: https://console.developers.google.com
     r = requests.get("https://maps.googleapis.com/maps/api/geocode/json?address="+ location +"&bounds="+ bounds +"&key="+ api_token)
     json = r.json()
     if (len(json['results']) == 0):
