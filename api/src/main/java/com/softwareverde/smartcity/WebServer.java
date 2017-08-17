@@ -5,6 +5,7 @@ import com.softwareverde.httpserver.HttpServer;
 import com.softwareverde.servlet.Endpoint;
 import com.softwareverde.servlet.Servlet;
 import com.softwareverde.smartcity.api.parkingmeter.ParkingMeterApi;
+import com.softwareverde.smartcity.api.parkingmeter.ParkingTicketApi;
 import com.softwareverde.smartcity.environment.Environment;
 
 import java.io.File;
@@ -36,6 +37,7 @@ public class WebServer {
         _apiServer.redirectToTls(false);
 
         _assignEndpoint("/api/v1/parking-meters", new ParkingMeterApi(_environment));
+        _assignEndpoint("/api/v1/parking-tickets", new ParkingTicketApi(_environment));
 
         { // Static Content
             final File servedDirectory = new File(_serverProperties.getRootDirectory() +"/");

@@ -24,10 +24,6 @@ import java.util.List;
 public class ParkingMeterApi implements Servlet {
     protected final Environment _environment;
 
-    public ParkingMeterApi(final Environment environment) {
-        _environment = environment;
-    }
-
     protected Double _measureDistance(final Double latitude, final Double longitude, final Double latitude2, final Double longitude2) {
         final Double R = 6378.137D; // Radius of earth in KM
         final Double dLat = latitude2 * Math.PI / 180D - latitude * Math.PI / 180D;
@@ -38,11 +34,132 @@ public class ParkingMeterApi implements Servlet {
         return d * 1000D; // In meters...
     }
 
-    protected <T> String _toNonNullString(T object) {
-        if (object == null) {
-            return "";
+    protected <T> String _toEmptyStringIfNull(T object) {
+        return ((object == null) ? "" : object.toString());
+    }
+
+    protected Response _getParkingMeterById(final PostParameters postParameters, final DatabaseConnection<Connection> databaseConnection) {
+        try {
+            final ParkingMeterInflater parkingMeterInflater = new ParkingMeterInflater();
+
+            final List<Row> rows;
+
+            final Long id = Util.parseLong(postParameters.get("id"));
+            final String meterId = postParameters.get("meter_id");
+
+            if (id > 0) {
+                rows = databaseConnection.query(
+                    new Query("SELECT * FROM parking_meters WHERE id = ?")
+                        .setParameter(id)
+                );
+            }
+            else {
+                rows = databaseConnection.query(
+                    new Query("SELECT * FROM parking_meters WHERE meter_id = ?")
+                        .setParameter(meterId)
+                );
+            }
+
+            if (rows.isEmpty()) {
+                return new JsonResponse(Response.ResponseCodes.BAD_REQUEST, new JsonResult(false, "Parking Meter Id not found."));
+            }
+
+            final GetParkingMeterResult jsonResult = new GetParkingMeterResult();
+            final ParkingMeter parkingMeter = parkingMeterInflater.fromRow(rows.get(0));
+            jsonResult.setParkingMeter(parkingMeter);
+
+            return new JsonResponse(Response.ResponseCodes.OK, jsonResult);
         }
-        return object.toString();
+        catch (final DatabaseException databaseException) {
+            return new JsonResponse(Response.ResponseCodes.SERVER_ERROR, new JsonResult(false, "An error occurred while trying to communicate with the database."));
+        }
+    }
+
+    protected Response _listParkingMeters(final PostParameters postParameters, final DatabaseConnection<Connection> databaseConnection) {
+        try {
+            final ParkingMeterInflater parkingMeterInflater = new ParkingMeterInflater();
+
+            final List<Row> rows = databaseConnection.query("SELECT * FROM parking_meters", null);
+
+            final ListParkingMeterResult jsonResult = new ListParkingMeterResult();
+            for (final Row row : rows) {
+                final ParkingMeter parkingMeter = parkingMeterInflater.fromRow(row);
+                jsonResult.addParkingMeter(parkingMeter);
+            }
+
+            return new JsonResponse(Response.ResponseCodes.OK, jsonResult);
+        }
+        catch (final DatabaseException databaseException) {
+            return new JsonResponse(Response.ResponseCodes.SERVER_ERROR, new JsonResult(false, "An error occurred while trying to communicate with the database."));
+        }
+    }
+
+    protected Response _searchForParkingMeter(final PostParameters postParameters, final DatabaseConnection<Connection> databaseConnection) {
+        try {
+            final ParkingMeterInflater parkingMeterInflater = new ParkingMeterInflater();
+
+            final Double radius = (postParameters.containsKey("radius") ? Util.parseDouble(postParameters.get("radius")) : null);
+            final Double radiusLatitude = Util.parseDouble(postParameters.get("latitude"));
+            final Double radiusLongitude = Util.parseDouble(postParameters.get("longitude"));
+
+            final String street = (postParameters.containsKey("street") ? postParameters.get("street") : null);
+            final Integer maxDwellDurationGreaterThan = (postParameters.containsKey("max_dwell_duration_greater_than") ? Util.parseInt(postParameters.get("max_dwell_duration_greater_than")) : null);
+            final Integer maxDwellDurationLessThan = (postParameters.containsKey("max_dwell_duration_less_than") ? Util.parseInt(postParameters.get("max_dwell_duration_less_than")) : null);
+            final Float rateGreaterThan = (postParameters.containsKey("rate_greater_than") ? Util.parseFloat(postParameters.get("rate_greater_than")) : null);
+            final Float rateLessThan = (postParameters.containsKey("rate_less_than") ? Util.parseFloat(postParameters.get("rate_less_than")) : null);
+            final Integer isHandicap = (postParameters.containsKey("is_handicap") ? (Util.parseBool(postParameters.get("is_handicap")) ? 1 : 0) : null);
+            final Integer isChargingStation = (postParameters.containsKey("is_charging_station") ? (Util.parseBool(postParameters.get("is_charging_station")) ? 1 : 0) : null);
+
+            final List<Row> rows = databaseConnection.query(
+                "SELECT * FROM parking_meters WHERE"
+                    +" (LENGTH(?) = 0 OR location LIKE ?)"
+                    +" AND (LENGTH(?) = 0 OR max_dwell_duration >= ?)"
+                    +" AND (LENGTH(?) = 0 OR max_dwell_duration <= ?)"
+                    +" AND (LENGTH(?) = 0 OR rate >= ?)"
+                    +" AND (LENGTH(?) = 0 OR rate <= ?)"
+                    +" AND (LENGTH(?) = 0 OR is_handicap = ?)"
+                    +" AND (LENGTH(?) = 0 OR is_charging_station = ?)",
+                new String[] {
+                    _toEmptyStringIfNull(street),                       _toEmptyStringIfNull(street),
+                    _toEmptyStringIfNull(maxDwellDurationGreaterThan),  _toEmptyStringIfNull(maxDwellDurationGreaterThan),
+                    _toEmptyStringIfNull(maxDwellDurationLessThan),     _toEmptyStringIfNull(maxDwellDurationLessThan),
+                    _toEmptyStringIfNull(rateGreaterThan),              _toEmptyStringIfNull(rateGreaterThan),
+                    _toEmptyStringIfNull(rateLessThan),                 _toEmptyStringIfNull(rateLessThan),
+                    _toEmptyStringIfNull(isHandicap),                   _toEmptyStringIfNull(isHandicap),
+                    _toEmptyStringIfNull(isChargingStation),            _toEmptyStringIfNull(isChargingStation)
+                }
+            );
+
+            final ListParkingMeterResult jsonResult = new ListParkingMeterResult();
+            for (final Row row : rows) {
+                final ParkingMeter parkingMeter = parkingMeterInflater.fromRow(row);
+
+                final Boolean shouldBeAdded;
+                if (radius == null) {
+                    shouldBeAdded = true;
+                }
+                else {
+                    final Double latitude = Util.coalesce(parkingMeter.getLatitude()).doubleValue();
+                    final Double longitude = Util.coalesce(parkingMeter.getLongitude()).doubleValue();
+
+                    final Double distance = _measureDistance(latitude, longitude, radiusLatitude, radiusLongitude);
+                    shouldBeAdded = (distance <= radius);
+                }
+
+                if (shouldBeAdded) {
+                    jsonResult.addParkingMeter(parkingMeter);
+                }
+            }
+
+            return new JsonResponse(Response.ResponseCodes.OK, jsonResult);
+        }
+        catch (final DatabaseException databaseException) {
+            return new JsonResponse(Response.ResponseCodes.SERVER_ERROR, new JsonResult(false, "An error occurred while trying to communicate with the database."));
+        }
+    }
+
+    public ParkingMeterApi(final Environment environment) {
+        _environment = environment;
     }
 
     @Override
@@ -65,40 +182,7 @@ public class ParkingMeterApi implements Servlet {
          *          meter_id[*] # The Columbus-Assigned Id. Mutually exclusive from id.
          */
         if (Util.parseInt(getParameters.get("get")) > 0) {
-            try {
-                final ParkingMeterInflater parkingMeterInflater = new ParkingMeterInflater();
-
-                final List<Row> rows;
-
-                final Long id = Util.parseLong(postParameters.get("id"));
-                final String meterId = postParameters.get("meter_id");
-
-                if (id > 0) {
-                    rows = databaseConnection.query(
-                        new Query("SELECT * FROM parking_meters WHERE id = ?")
-                            .setParameter(id)
-                    );
-                }
-                else {
-                    rows = databaseConnection.query(
-                        new Query("SELECT * FROM parking_meters WHERE meter_id = ?")
-                            .setParameter(meterId)
-                    );
-                }
-
-                if (rows.isEmpty()) {
-                    return new JsonResponse(Response.ResponseCodes.BAD_REQUEST, new JsonResult(false, "Parking Meter Id not found."));
-                }
-
-                final GetParkingMeterResult jsonResult = new GetParkingMeterResult();
-                final ParkingMeter parkingMeter = parkingMeterInflater.fromRow(rows.get(0));
-                jsonResult.setParkingMeter(parkingMeter);
-
-                return new JsonResponse(Response.ResponseCodes.OK, jsonResult);
-            }
-            catch (final DatabaseException databaseException) {
-                return new JsonResponse(Response.ResponseCodes.SERVER_ERROR, new JsonResult(false, "An error occurred while trying to communicate with the database."));
-            }
+            return _getParkingMeterById(postParameters, databaseConnection);
         }
 
         /**
@@ -107,22 +191,7 @@ public class ParkingMeterApi implements Servlet {
          * POST:
          */
         if (Util.parseInt(getParameters.get("list")) > 0) {
-            try {
-                final ParkingMeterInflater parkingMeterInflater = new ParkingMeterInflater();
-
-                final List<Row> rows = databaseConnection.query("SELECT * FROM parking_meters", null);
-
-                final ListParkingMeterResult jsonResult = new ListParkingMeterResult();
-                for (final Row row : rows) {
-                    final ParkingMeter parkingMeter = parkingMeterInflater.fromRow(row);
-                    jsonResult.addParkingMeter(parkingMeter);
-                }
-
-                return new JsonResponse(Response.ResponseCodes.OK, jsonResult);
-            }
-            catch (final DatabaseException databaseException) {
-                return new JsonResponse(Response.ResponseCodes.SERVER_ERROR, new JsonResult(false, "An error occurred while trying to communicate with the database."));
-            }
+            return _listParkingMeters(postParameters, databaseConnection);
         }
 
         /**
@@ -138,67 +207,7 @@ public class ParkingMeterApi implements Servlet {
          *          is_charging_station[=0|1]               # Return only Parking Meters designated as a charging station when set to 1, or not a charging station when set to 0. (Optional)
          */
         if (Util.parseInt(getParameters.get("search")) > 0) {
-            try {
-                final ParkingMeterInflater parkingMeterInflater = new ParkingMeterInflater();
-
-                final Double radius = (postParameters.containsKey("radius") ? Util.parseDouble(postParameters.get("radius")) : null);
-                final Double radiusLatitude = Util.parseDouble(postParameters.get("latitude"));
-                final Double radiusLongitude = Util.parseDouble(postParameters.get("longitude"));
-
-                final String street = (postParameters.containsKey("street") ? postParameters.get("street") : null);
-                final Integer maxDwellDurationGreaterThan = (postParameters.containsKey("max_dwell_duration_greater_than") ? Util.parseInt(postParameters.get("max_dwell_duration_greater_than")) : null);
-                final Integer maxDwellDurationLessThan = (postParameters.containsKey("max_dwell_duration_less_than") ? Util.parseInt(postParameters.get("max_dwell_duration_less_than")) : null);
-                final Float rateGreaterThan = (postParameters.containsKey("rate_greater_than") ? Util.parseFloat(postParameters.get("rate_greater_than")) : null);
-                final Float rateLessThan = (postParameters.containsKey("rate_less_than") ? Util.parseFloat(postParameters.get("rate_less_than")) : null);
-                final Integer isHandicap = (postParameters.containsKey("is_handicap") ? (Util.parseBool(postParameters.get("is_handicap")) ? 1 : 0) : null);
-                final Integer isChargingStation = (postParameters.containsKey("is_charging_station") ? (Util.parseBool(postParameters.get("is_charging_station")) ? 1 : 0) : null);
-
-                final List<Row> rows = databaseConnection.query(
-                    "SELECT * FROM parking_meters WHERE"
-                        +" (LENGTH(?) = 0 OR location LIKE ?)"
-                        +" AND (LENGTH(?) = 0 OR max_dwell_duration >= ?)"
-                        +" AND (LENGTH(?) = 0 OR max_dwell_duration <= ?)"
-                        +" AND (LENGTH(?) = 0 OR rate >= ?)"
-                        +" AND (LENGTH(?) = 0 OR rate <= ?)"
-                        +" AND (LENGTH(?) = 0 OR is_handicap = ?)"
-                        +" AND (LENGTH(?) = 0 OR is_charging_station = ?)",
-                    new String[] {
-                        _toNonNullString(street),                       _toNonNullString(street),
-                        _toNonNullString(maxDwellDurationGreaterThan),  _toNonNullString(maxDwellDurationGreaterThan),
-                        _toNonNullString(maxDwellDurationLessThan),     _toNonNullString(maxDwellDurationLessThan),
-                        _toNonNullString(rateGreaterThan),              _toNonNullString(rateGreaterThan),
-                        _toNonNullString(rateLessThan),                 _toNonNullString(rateLessThan),
-                        _toNonNullString(isHandicap),                   _toNonNullString(isHandicap),
-                        _toNonNullString(isChargingStation),            _toNonNullString(isChargingStation)
-                    }
-                );
-
-                final ListParkingMeterResult jsonResult = new ListParkingMeterResult();
-                for (final Row row : rows) {
-                    final ParkingMeter parkingMeter = parkingMeterInflater.fromRow(row);
-
-                    final Boolean shouldBeAdded;
-                    if (radius == null) {
-                        shouldBeAdded = true;
-                    }
-                    else {
-                        final Double latitude = Util.coalesce(parkingMeter.getLatitude()).doubleValue();
-                        final Double longitude = Util.coalesce(parkingMeter.getLongitude()).doubleValue();
-
-                        final Double distance = _measureDistance(latitude, longitude, radiusLatitude, radiusLongitude);
-                        shouldBeAdded = (distance <= radius);
-                    }
-
-                    if (shouldBeAdded) {
-                        jsonResult.addParkingMeter(parkingMeter);
-                    }
-                }
-
-                return new JsonResponse(Response.ResponseCodes.OK, jsonResult);
-            }
-            catch (final DatabaseException databaseException) {
-                return new JsonResponse(Response.ResponseCodes.SERVER_ERROR, new JsonResult(false, "An error occurred while trying to communicate with the database."));
-            }
+            return _searchForParkingMeter(postParameters, databaseConnection);
         }
 
         return new JsonResponse(Response.ResponseCodes.BAD_REQUEST, new JsonResult(false, "Nothing to do."));
