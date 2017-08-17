@@ -2,7 +2,8 @@ package com.softwareverde.smartcity;
 
 import com.softwareverde.httpserver.DirectoryServlet;
 import com.softwareverde.httpserver.HttpServer;
-import com.softwareverde.httpserver.endpoint.Endpoint;
+import com.softwareverde.servlet.Endpoint;
+import com.softwareverde.servlet.Servlet;
 import com.softwareverde.smartcity.api.parkingmeter.ParkingMeterApi;
 import com.softwareverde.smartcity.environment.Environment;
 
@@ -14,9 +15,11 @@ public class WebServer {
 
     private final HttpServer _apiServer = new HttpServer();
 
-    private <T extends Endpoint> void _assignEndpoint(final String path, final T apiEndpoint) {
-        apiEndpoint.setStrictPathEnabled(true);
-        _apiServer.addEndpoint(path, apiEndpoint);
+    private void _assignEndpoint(final String path, final Servlet apiServlet) {
+        final Endpoint endpoint = new Endpoint(apiServlet);
+        endpoint.setStrictPathEnabled(true);
+        endpoint.setPath(path);
+        _apiServer.addEndpoint(endpoint);
     }
 
     public WebServer(final Configuration.ServerProperties serverProperties, final Environment environment) {
@@ -39,7 +42,12 @@ public class WebServer {
             final DirectoryServlet indexEndpoint = new DirectoryServlet(servedDirectory);
             indexEndpoint.setShouldServeDirectories(true);
             indexEndpoint.setIndexFile("index.html");
-            _apiServer.addEndpoint("/", indexEndpoint);
+            indexEndpoint.setShouldServeDirectories(true);
+
+            final Endpoint endpoint = new Endpoint(indexEndpoint);
+            endpoint.setStrictPathEnabled(false);
+            endpoint.setPath("/");
+            _apiServer.addEndpoint(endpoint);
         }
 
         _apiServer.start();

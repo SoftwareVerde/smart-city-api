@@ -4,15 +4,15 @@ import com.softwareverde.database.DatabaseConnection;
 import com.softwareverde.database.DatabaseException;
 import com.softwareverde.database.Query;
 import com.softwareverde.database.Row;
-import com.softwareverde.httpserver.GetParameters;
-import com.softwareverde.httpserver.PostParameters;
-import com.softwareverde.httpserver.endpoint.Endpoint;
-import com.softwareverde.httpserver.request.Request;
-import com.softwareverde.httpserver.response.JsonResponse;
-import com.softwareverde.httpserver.response.JsonResult;
-import com.softwareverde.httpserver.response.Response;
+import com.softwareverde.servlet.GetParameters;
+import com.softwareverde.servlet.PostParameters;
+import com.softwareverde.servlet.Servlet;
+import com.softwareverde.servlet.request.Request;
+import com.softwareverde.servlet.response.JsonResponse;
+import com.softwareverde.servlet.response.Response;
 import com.softwareverde.smartcity.api.parkingmeter.response.GetParkingMeterResult;
 import com.softwareverde.smartcity.api.parkingmeter.response.ListParkingMeterResult;
+import com.softwareverde.smartcity.api.response.JsonResult;
 import com.softwareverde.smartcity.environment.Environment;
 import com.softwareverde.smartcity.parkingmeter.ParkingMeter;
 import com.softwareverde.smartcity.parkingmeter.ParkingMeterInflater;
@@ -21,7 +21,7 @@ import com.softwareverde.util.Util;
 import java.sql.Connection;
 import java.util.List;
 
-public class ParkingMeterApi extends Endpoint {
+public class ParkingMeterApi implements Servlet {
     protected final Environment _environment;
 
     public ParkingMeterApi(final Environment environment) {
