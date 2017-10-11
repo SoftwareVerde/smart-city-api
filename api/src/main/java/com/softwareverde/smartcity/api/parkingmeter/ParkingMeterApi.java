@@ -4,6 +4,7 @@ import com.softwareverde.database.DatabaseConnection;
 import com.softwareverde.database.DatabaseException;
 import com.softwareverde.database.Query;
 import com.softwareverde.database.Row;
+import com.softwareverde.geo.util.GeoUtil;
 import com.softwareverde.servlet.GetParameters;
 import com.softwareverde.servlet.PostParameters;
 import com.softwareverde.servlet.Servlet;
@@ -23,16 +24,6 @@ import java.util.List;
 
 public class ParkingMeterApi implements Servlet {
     protected final Environment _environment;
-
-    protected Double _measureDistance(final Double latitude, final Double longitude, final Double latitude2, final Double longitude2) {
-        final Double R = 6378.137D; // Radius of earth in KM
-        final Double dLat = latitude2 * Math.PI / 180D - latitude * Math.PI / 180D;
-        final Double dLon = longitude2 * Math.PI / 180D - longitude * Math.PI / 180D;
-        final Double a = Math.sin(dLat / 2D) * Math.sin(dLat / 2D) + Math.cos(latitude * Math.PI / 180D) * Math.cos(latitude2 * Math.PI / 180D) * Math.sin(dLon / 2D) * Math.sin(dLon / 2D);
-        final Double c = 2D * Math.atan2(Math.sqrt(a), Math.sqrt(1D - a));
-        final Double d = R * c;
-        return d * 1000D; // In meters...
-    }
 
     protected Response _generateDatabaseErrorResponse(final DatabaseException databaseException) {
         return new JsonResponse(Response.ResponseCodes.SERVER_ERROR, new JsonResult(false, "An error occurred while trying to communicate with the database."));
@@ -135,7 +126,7 @@ public class ParkingMeterApi implements Servlet {
                 final Double latitude = Util.coalesce(parkingMeter.getLatitude()).doubleValue();
                 final Double longitude = Util.coalesce(parkingMeter.getLongitude()).doubleValue();
 
-                final Double distance = _measureDistance(latitude, longitude, radiusLatitude, radiusLongitude);
+                final Double distance = GeoUtil.greatCircleDistanceInMeters(latitude, longitude, radiusLatitude, radiusLongitude);
                 shouldBeAdded = (distance <= radius);
             }
 
