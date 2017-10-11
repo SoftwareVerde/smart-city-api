@@ -17,6 +17,7 @@ import com.softwareverde.smartcity.api.response.JsonResult;
 import com.softwareverde.smartcity.environment.Environment;
 import com.softwareverde.smartcity.parkingmeter.ParkingMeter;
 import com.softwareverde.smartcity.parkingmeter.ParkingMeterInflater;
+import com.softwareverde.smartcity.util.SmartCityUtil;
 import com.softwareverde.util.Util;
 
 import java.sql.Connection;
@@ -24,14 +25,6 @@ import java.util.List;
 
 public class ParkingMeterApi implements Servlet {
     protected final Environment _environment;
-
-    protected Response _generateDatabaseErrorResponse(final DatabaseException databaseException) {
-        return new JsonResponse(Response.ResponseCodes.SERVER_ERROR, new JsonResult(false, "An error occurred while trying to communicate with the database."));
-    }
-
-    protected <T> String _toEmptyStringIfNull(T object) {
-        return ((object == null) ? "" : object.toString());
-    }
 
     protected Response _getParkingMeterById(final PostParameters postParameters, final DatabaseConnection<Connection> databaseConnection) throws DatabaseException {
         final ParkingMeterInflater parkingMeterInflater = new ParkingMeterInflater();
@@ -104,13 +97,13 @@ public class ParkingMeterApi implements Servlet {
                 +" AND (LENGTH(?) = 0 OR is_handicap = ?)"
                 +" AND (LENGTH(?) = 0 OR is_charging_station = ?)",
             new String[] {
-                _toEmptyStringIfNull(street),                       _toEmptyStringIfNull(street),
-                _toEmptyStringIfNull(maxDwellDurationGreaterThan),  _toEmptyStringIfNull(maxDwellDurationGreaterThan),
-                _toEmptyStringIfNull(maxDwellDurationLessThan),     _toEmptyStringIfNull(maxDwellDurationLessThan),
-                _toEmptyStringIfNull(rateGreaterThan),              _toEmptyStringIfNull(rateGreaterThan),
-                _toEmptyStringIfNull(rateLessThan),                 _toEmptyStringIfNull(rateLessThan),
-                _toEmptyStringIfNull(isHandicap),                   _toEmptyStringIfNull(isHandicap),
-                _toEmptyStringIfNull(isChargingStation),            _toEmptyStringIfNull(isChargingStation)
+                SmartCityUtil.toEmptyStringIfNull(street),                       SmartCityUtil.toEmptyStringIfNull(street),
+                SmartCityUtil.toEmptyStringIfNull(maxDwellDurationGreaterThan),  SmartCityUtil.toEmptyStringIfNull(maxDwellDurationGreaterThan),
+                SmartCityUtil.toEmptyStringIfNull(maxDwellDurationLessThan),     SmartCityUtil.toEmptyStringIfNull(maxDwellDurationLessThan),
+                SmartCityUtil.toEmptyStringIfNull(rateGreaterThan),              SmartCityUtil.toEmptyStringIfNull(rateGreaterThan),
+                SmartCityUtil.toEmptyStringIfNull(rateLessThan),                 SmartCityUtil.toEmptyStringIfNull(rateLessThan),
+                SmartCityUtil.toEmptyStringIfNull(isHandicap),                   SmartCityUtil.toEmptyStringIfNull(isHandicap),
+                SmartCityUtil.toEmptyStringIfNull(isChargingStation),            SmartCityUtil.toEmptyStringIfNull(isChargingStation)
             }
         );
 
@@ -153,13 +146,13 @@ public class ParkingMeterApi implements Servlet {
             databaseConnection = _environment.database.newConnection();
         }
         catch (final DatabaseException databaseException) {
-            return _generateDatabaseErrorResponse(databaseException);
+            return SmartCityUtil.generateDatabaseErrorResponse(databaseException);
         }
 
         final GetParameters getParameters = request.getGetParameters();
         final PostParameters postParameters = request.getPostParameters();
 
-        /**
+        /*
          * Get a parking meter by its Id.
          * GET:     get[=1]
          * POST:    id[>0]      # The Id (primary key) used for this API. Mutually exclusive from meter_id.
@@ -170,11 +163,11 @@ public class ParkingMeterApi implements Servlet {
                 return _getParkingMeterById(postParameters, databaseConnection);
             }
             catch (final DatabaseException databaseException) {
-                return _generateDatabaseErrorResponse(databaseException);
+                return SmartCityUtil.generateDatabaseErrorResponse(databaseException);
             }
         }
 
-        /**
+        /*
          * List all parking meters.
          * GET:     list[=1]
          * POST:
@@ -184,11 +177,11 @@ public class ParkingMeterApi implements Servlet {
                 return _listParkingMeters(postParameters, databaseConnection);
             }
             catch (final DatabaseException databaseException) {
-                return _generateDatabaseErrorResponse(databaseException);
+                return SmartCityUtil.generateDatabaseErrorResponse(databaseException);
             }
         }
 
-        /**
+        /*
          * Search for parking meters.
          * GET:     search[=1]
          * POST:    radius[>=0], latitude[*], longitude[*]  # Radius (in meters) from its Latitude/Longitude to the provided latitude and longitude. (Inclusive) (Optional)
@@ -205,7 +198,7 @@ public class ParkingMeterApi implements Servlet {
                 return _searchForParkingMeter(postParameters, databaseConnection);
             }
             catch (final DatabaseException databaseException) {
-                return _generateDatabaseErrorResponse(databaseException);
+                return SmartCityUtil.generateDatabaseErrorResponse(databaseException);
             }
         }
 
