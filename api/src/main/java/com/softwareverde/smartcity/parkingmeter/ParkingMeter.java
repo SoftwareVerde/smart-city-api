@@ -39,4 +39,8 @@ public class ParkingMeter {
 
     public void setLongitude(final Float longitude) { _longitude = longitude; }
     public Float getLongitude() { return _longitude; }
+
+    public boolean hasLatitudeAndLongitude() {
+        return _latitude != null && _longitude != null;
+    }
 }

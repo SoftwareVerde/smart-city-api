@@ -122,6 +122,10 @@ public class ParkingMeterApi implements Servlet {
             if (radius == null) {
                 shouldBeAdded = true;
             }
+            else if (!parkingMeter.hasLatitudeAndLongitude()) {
+                // when using radius, ignore any record with null lat/long
+                shouldBeAdded = false;
+            }
             else {
                 final Double latitude = Util.coalesce(parkingMeter.getLatitude()).doubleValue();
                 final Double longitude = Util.coalesce(parkingMeter.getLongitude()).doubleValue();
