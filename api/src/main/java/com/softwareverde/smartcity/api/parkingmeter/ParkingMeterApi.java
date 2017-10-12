@@ -42,7 +42,7 @@ public class ParkingMeterApi implements Servlet {
         }
 
         if (parkingMeter == null) {
-            return new JsonResponse(Response.ResponseCodes.BAD_REQUEST, new JsonResult(false, "Parking Meter Id not found."));
+            return new JsonResponse(Response.ResponseCodes.BAD_REQUEST, new JsonResult(false, "Parking meter not found."));
         }
 
         final GetParkingMeterResult jsonResult = new GetParkingMeterResult();
@@ -158,12 +158,12 @@ public class ParkingMeterApi implements Servlet {
          * GET:     search[=1]
          * POST:    radius[>=0], latitude[*], longitude[*]  # Radius (in meters) from its Latitude/Longitude to the provided latitude and longitude. (Inclusive) (Optional)
          *          street[*]                               # Match on Location, including wildcards (via "%"). (Optional) (e.x. "front%" will match both "Front ST N" and "Front ST S")
-         *          max_dwell_duration_greater_than[>=0]    # Return Parking Meters whose Max Dwell Duration is greater than max_dwell_duration_greater_than (in minutes) (inclusive). (Optional)
-         *          max_dwell_duration_less_than[>=0]       # Return Parking Meters whose Max Dwell Duration is less than max_dwell_duration_less_than (in minutes) (inclusive). (Optional)
-         *          rate_greater_than[>=0]                  # Return Parking Meters whose Rate is greater than rate_greater_than (in dollars) (inclusive). (Optional)
-         *          rate_less_than[>=0]                     # Return Parking Meters whose Rate is less than rate_less_than (in dollars) (inclusive). (Optional)
-         *          is_handicap[=0|1]                       # Return only Parking Meters designated as handicap when set to 1, or not handicap when set to 0. (Optional)
-         *          is_charging_station[=0|1]               # Return only Parking Meters designated as a charging station when set to 1, or not a charging station when set to 0. (Optional)
+         *          max_dwell_duration_greater_than[>=0]    # Return parking meters whose Max Dwell Duration is greater than max_dwell_duration_greater_than (in minutes) (inclusive). (Optional)
+         *          max_dwell_duration_less_than[>=0]       # Return parking meters whose Max Dwell Duration is less than max_dwell_duration_less_than (in minutes) (inclusive). (Optional)
+         *          rate_greater_than[>=0]                  # Return parking meters whose Rate is greater than rate_greater_than (in dollars) (inclusive). (Optional)
+         *          rate_less_than[>=0]                     # Return parking meters whose Rate is less than rate_less_than (in dollars) (inclusive). (Optional)
+         *          is_handicap[=0|1]                       # Return parking meters designated as handicap when set to 1, or not handicap when set to 0. (Optional)
+         *          is_charging_station[=0|1]               # Return parking meters designated as a charging station when set to 1, or not a charging station when set to 0. (Optional)
          */
         if (Util.parseInt(getParameters.get("search")) > 0) {
             try {

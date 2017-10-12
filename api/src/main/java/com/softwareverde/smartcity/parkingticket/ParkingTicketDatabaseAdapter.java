@@ -2,6 +2,7 @@ package com.softwareverde.smartcity.parkingticket;
 
 import com.softwareverde.database.DatabaseConnection;
 import com.softwareverde.database.DatabaseException;
+import com.softwareverde.database.Query;
 import com.softwareverde.database.Row;
 import com.softwareverde.smartcity.licenseplate.LicensePlate;
 import com.softwareverde.smartcity.licenseplate.LicensePlateDatabaseAdapter;
@@ -29,6 +30,34 @@ public class ParkingTicketDatabaseAdapter {
             parkingTickets.add(parkingTicket);
         }
         return parkingTickets;
+    }
+
+    public ParkingTicket inflateById(final Long id) throws DatabaseException {
+        final Query query = new Query("SELECT * FROM parking_tickets WHERE id = ?");
+        query.setParameter(id);
+
+        final List<Row> rows = _databaseConnection.query(query);
+        if (rows.size() == 0) {
+            return null;
+        }
+        else {
+            final Row row = rows.get(0);
+            return _fromRow(row);
+        }
+    }
+
+    public ParkingTicket inflateByTicketNumber(final String ticketNumber) throws DatabaseException {
+        final Query query = new Query("SELECT * FROM parking_tickets WHERE ticket_number = ?");
+        query.setParameter(ticketNumber);
+
+        final List<Row> rows = _databaseConnection.query(query);
+        if (rows.size() == 0) {
+            return null;
+        }
+        else {
+            final Row row = rows.get(0);
+            return _fromRow(row);
+        }
     }
 
     private ParkingTicket _fromRow(final Row row) throws DatabaseException {
