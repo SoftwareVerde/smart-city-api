@@ -2,7 +2,6 @@ package com.softwareverde.smartcity.api.parkingmeter;
 
 import com.softwareverde.database.DatabaseConnection;
 import com.softwareverde.database.DatabaseException;
-import com.softwareverde.database.Row;
 import com.softwareverde.geo.util.GeoUtil;
 import com.softwareverde.servlet.GetParameters;
 import com.softwareverde.servlet.PostParameters;
@@ -27,8 +26,6 @@ public class ParkingMeterApi implements Servlet {
 
     protected Response _getParkingMeterById(final PostParameters postParameters, final DatabaseConnection<Connection> databaseConnection) throws DatabaseException {
         final ParkingMeterDatabaseAdapter parkingMeterDatabaseAdapter = new ParkingMeterDatabaseAdapter(databaseConnection);
-
-        final List<Row> rows;
 
         final Long id = Util.parseLong(postParameters.get("id"));
         final String meterId = postParameters.get("meter_id");
@@ -92,8 +89,8 @@ public class ParkingMeterApi implements Servlet {
                 shouldBeAdded = false;
             }
             else {
-                final Double latitude = Util.coalesce(parkingMeter.getLatitude()).doubleValue();
-                final Double longitude = Util.coalesce(parkingMeter.getLongitude()).doubleValue();
+                final Double latitude = parkingMeter.getLatitude();
+                final Double longitude = parkingMeter.getLongitude();
 
                 final Double distance = GeoUtil.greatCircleDistanceInMeters(latitude, longitude, radiusLatitude, radiusLongitude);
                 shouldBeAdded = (distance <= radius);
@@ -156,7 +153,7 @@ public class ParkingMeterApi implements Servlet {
         /*
          * Search for parking meters.
          * GET:     search[=1]
-         * POST:    radius[>=0], latitude[*], longitude[*]  # Radius (in meters) from its Latitude/Longitude to the provided latitude and longitude. (Inclusive) (Optional)
+         * POST:    radius[>=0], latitude[*], longitude[*]  # Radius (in meters) from its Latitude/Longitude to the provided latitude and longitude (inclusive). (Optional)
          *          street[*]                               # Match on Location, including wildcards (via "%"). (Optional) (e.x. "front%" will match both "Front ST N" and "Front ST S")
          *          max_dwell_duration_greater_than[>=0]    # Return parking meters whose Max Dwell Duration is greater than max_dwell_duration_greater_than (in minutes) (inclusive). (Optional)
          *          max_dwell_duration_less_than[>=0]       # Return parking meters whose Max Dwell Duration is less than max_dwell_duration_less_than (in minutes) (inclusive). (Optional)

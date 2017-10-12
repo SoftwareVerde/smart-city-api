@@ -113,4 +113,8 @@ public class ParkingTicket {
     public void setLongitude(final Double longitude) {
         _longitude = longitude;
     }
+
+    public boolean hasLatitudeAndLongitude() {
+        return _latitude != null && _longitude != null;
+    }
 }

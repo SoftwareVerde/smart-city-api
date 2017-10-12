@@ -6,9 +6,11 @@ import com.softwareverde.database.Query;
 import com.softwareverde.database.Row;
 import com.softwareverde.smartcity.licenseplate.LicensePlate;
 import com.softwareverde.smartcity.licenseplate.LicensePlateDatabaseAdapter;
+import com.softwareverde.smartcity.util.SmartCityUtil;
 import com.softwareverde.util.DateUtil;
 
 import java.sql.Connection;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -58,6 +60,51 @@ public class ParkingTicketDatabaseAdapter {
             final Row row = rows.get(0);
             return _fromRow(row);
         }
+    }
+
+    public List<ParkingTicket> inflateBySearchCriteria(final String street, final Date dateAfter, final Date dateBefore, final String licensePlateNumber, final String licensePlateState, final String violationCode, final Double fineAmountGreaterThan, final Double fineAmountLessThan, final Double paidAmountGreaterThan, final Double paidAmountLessThan, final Double dueAmountGreaterThan, final Double dueAmountLessThan, final String disposition) throws DatabaseException {
+        SimpleDateFormat mysqlDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        final String dateAfterString = dateAfter == null ? null : mysqlDateFormat.format(dateAfter);
+        final String dateBeforeString = dateBefore == null ? null : mysqlDateFormat.format(dateBefore);
+
+        final List<Row> rows = _databaseConnection.query(
+                "SELECT *, license_plates.number AS license_plate_number, license_plates.state AS license_plate_state FROM parking_tickets LEFT OUTER JOIN license_plates ON license_plates.id = parking_tickets.license_plate_id WHERE"
+                        +" (LENGTH(?) = 0 OR location LIKE ?)"
+                        +" AND (LENGTH(?) = 0 OR date >= CAST(? AS DATE))"
+                        +" AND (LENGTH(?) = 0 OR date <= CAST(? AS DATE))"
+                        +" AND (LENGTH(?) = 0 OR license_plates.number LIKE ?)"
+                        +" AND (LENGTH(?) = 0 OR license_plates.state = ?)"
+                        +" AND (LENGTH(?) = 0 OR violation_code LIKE ?)"
+                        +" AND (LENGTH(?) = 0 OR fine_amount >= ?)"
+                        +" AND (LENGTH(?) = 0 OR fine_amount <= ?)"
+                        +" AND (LENGTH(?) = 0 OR paid_amount >= ?)"
+                        +" AND (LENGTH(?) = 0 OR paid_amount <= ?)"
+                        +" AND (LENGTH(?) = 0 OR due_amount >= ?)"
+                        +" AND (LENGTH(?) = 0 OR due_amount <= ?)"
+                        +" AND (LENGTH(?) = 0 OR disposition LIKE ?)",
+                new String[] {
+                        SmartCityUtil.toEmptyStringIfNull(street),                  SmartCityUtil.toEmptyStringIfNull(street),
+                        SmartCityUtil.toEmptyStringIfNull(dateAfter),               SmartCityUtil.toEmptyStringIfNull(dateAfterString),
+                        SmartCityUtil.toEmptyStringIfNull(dateBefore),              SmartCityUtil.toEmptyStringIfNull(dateBeforeString),
+                        SmartCityUtil.toEmptyStringIfNull(licensePlateNumber),      SmartCityUtil.toEmptyStringIfNull(licensePlateNumber),
+                        SmartCityUtil.toEmptyStringIfNull(licensePlateState),       SmartCityUtil.toEmptyStringIfNull(licensePlateState),
+                        SmartCityUtil.toEmptyStringIfNull(violationCode),           SmartCityUtil.toEmptyStringIfNull(violationCode),
+                        SmartCityUtil.toEmptyStringIfNull(fineAmountGreaterThan),   SmartCityUtil.toEmptyStringIfNull(fineAmountGreaterThan),
+                        SmartCityUtil.toEmptyStringIfNull(fineAmountLessThan),      SmartCityUtil.toEmptyStringIfNull(fineAmountLessThan),
+                        SmartCityUtil.toEmptyStringIfNull(paidAmountGreaterThan),   SmartCityUtil.toEmptyStringIfNull(paidAmountGreaterThan),
+                        SmartCityUtil.toEmptyStringIfNull(paidAmountLessThan),      SmartCityUtil.toEmptyStringIfNull(paidAmountLessThan),
+                        SmartCityUtil.toEmptyStringIfNull(dueAmountGreaterThan),    SmartCityUtil.toEmptyStringIfNull(dueAmountGreaterThan),
+                        SmartCityUtil.toEmptyStringIfNull(dueAmountLessThan),       SmartCityUtil.toEmptyStringIfNull(dueAmountLessThan),
+                        SmartCityUtil.toEmptyStringIfNull(disposition),             SmartCityUtil.toEmptyStringIfNull(disposition)
+                }
+        );
+
+        final List<ParkingTicket> parkingTickets = new ArrayList<>();
+        for (final Row row : rows) {
+            final ParkingTicket parkingTicket = _fromRowWithInlineChildren(row);
+            parkingTickets.add(parkingTicket);
+        }
+        return parkingTickets;
     }
 
     private ParkingTicket _fromRow(final Row row) throws DatabaseException {
