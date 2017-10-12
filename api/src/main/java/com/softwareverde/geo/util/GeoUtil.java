@@ -1,5 +1,9 @@
 package com.softwareverde.geo.util;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 public class GeoUtil {
 
     public static final double EARTH_RADIUS_IN_KM = 6378.137D;
@@ -24,5 +28,33 @@ public class GeoUtil {
         final double c = 2D * Math.atan2(Math.sqrt(a), Math.sqrt(1D - a));
         final double d = EARTH_RADIUS_IN_KM * c;
         return d * 1000D; // In meters
+    }
+
+    public static <T> Collection<T> filterByLocation(final Collection<T> originals, final LocationExtractor<T> locationExtractor, final Double radius, final Double targetLatitude, final Double targetLongitude) {
+        if (radius == null || targetLatitude == null || targetLongitude == null) {
+            // required data not all specified, return copy of original collection (i.e. don't filter)
+            return new ArrayList<>(originals);
+        }
+
+        final List<T> filteredList = new ArrayList<>();
+        for (final T object : originals) {
+            final Double latitude = locationExtractor.getLatitude(object);
+            final Double longitude = locationExtractor.getLongitude(object);
+
+            final Boolean shouldBeAdded;
+            if (latitude == null || longitude == null) {
+                // when using radius, filter out any object with null lat/long
+                shouldBeAdded = false;
+            }
+            else {
+                final Double distance = GeoUtil.greatCircleDistanceInMeters(latitude, longitude, targetLatitude, targetLongitude);
+                shouldBeAdded = (distance <= radius);
+            }
+
+            if (shouldBeAdded) {
+                filteredList.add(object);
+            }
+        }
+        return filteredList;
     }
 }

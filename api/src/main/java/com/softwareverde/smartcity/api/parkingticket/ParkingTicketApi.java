@@ -15,11 +15,13 @@ import com.softwareverde.smartcity.api.response.JsonResult;
 import com.softwareverde.smartcity.environment.Environment;
 import com.softwareverde.smartcity.parkingticket.ParkingTicket;
 import com.softwareverde.smartcity.parkingticket.ParkingTicketDatabaseAdapter;
+import com.softwareverde.smartcity.parkingticket.ParkingTicketLocationExtractor;
 import com.softwareverde.smartcity.util.SmartCityUtil;
 import com.softwareverde.util.DateUtil;
 import com.softwareverde.util.Util;
 
 import java.sql.Connection;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -163,28 +165,11 @@ public class ParkingTicketApi implements Servlet {
         final String disposition = (postParameters.containsKey("disposition") ? postParameters.get("disposition") : null);
 
         List<ParkingTicket> matchingParkingTickets = parkingTicketDatabaseAdapter.inflateBySearchCriteria(street, dateAfter, dateBefore, licensePlateNumber, licensePlateState, violationCode, fineAmountGreaterThan, fineAmountLessThan, paidAmountGreaterThan, paidAmountLessThan, dueAmountGreaterThan, dueAmountLessThan, disposition);
+        Collection<ParkingTicket> locationFilteredParkingTickets = GeoUtil.filterByLocation(matchingParkingTickets, new ParkingTicketLocationExtractor(), radius, radiusLatitude, radiusLongitude);
 
         final ListParkingTicketResult jsonResult = new ListParkingTicketResult();
-        for (final ParkingTicket parkingTicket : matchingParkingTickets) {
-            final Boolean shouldBeAdded;
-            if (radius == null) {
-                shouldBeAdded = true;
-            }
-            else if (!parkingTicket.hasLatitudeAndLongitude()) {
-                // when using radius, ignore any record with null lat/long
-                shouldBeAdded = false;
-            }
-            else {
-                final Double latitude = parkingTicket.getLatitude();
-                final Double longitude = parkingTicket.getLongitude();
-
-                final Double distance = GeoUtil.greatCircleDistanceInMeters(latitude, longitude, radiusLatitude, radiusLongitude);
-                shouldBeAdded = (distance <= radius);
-            }
-
-            if (shouldBeAdded) {
-                jsonResult.addParkingTicket(parkingTicket);
-            }
+        for (final ParkingTicket parkingTicket : locationFilteredParkingTickets) {
+            jsonResult.addParkingTicket(parkingTicket);
         }
 
         return new JsonResponse(Response.ResponseCodes.OK, jsonResult);

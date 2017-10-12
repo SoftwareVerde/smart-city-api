@@ -15,10 +15,12 @@ import com.softwareverde.smartcity.api.response.JsonResult;
 import com.softwareverde.smartcity.environment.Environment;
 import com.softwareverde.smartcity.parkingmeter.ParkingMeter;
 import com.softwareverde.smartcity.parkingmeter.ParkingMeterDatabaseAdapter;
+import com.softwareverde.smartcity.parkingmeter.ParkingMeterLocationExtractor;
 import com.softwareverde.smartcity.util.SmartCityUtil;
 import com.softwareverde.util.Util;
 
 import java.sql.Connection;
+import java.util.Collection;
 import java.util.List;
 
 public class ParkingMeterApi implements Servlet {
@@ -77,28 +79,11 @@ public class ParkingMeterApi implements Servlet {
         final Boolean isChargingStation = (postParameters.containsKey("is_charging_station") ? Util.parseBool(postParameters.get("is_charging_station")) : null);
 
         List<ParkingMeter> matchingParkingMeters = parkingMeterDatabaseAdapter.inflateBySearchCriteria(street, maxDwellDurationGreaterThan, maxDwellDurationLessThan, rateGreaterThan, rateLessThan, isHandicap, isChargingStation);
+        Collection<ParkingMeter> locationFilteredParkingMeters = GeoUtil.filterByLocation(matchingParkingMeters, new ParkingMeterLocationExtractor(), radius, radiusLatitude, radiusLongitude);
 
         final ListParkingMeterResult jsonResult = new ListParkingMeterResult();
-        for (final ParkingMeter parkingMeter : matchingParkingMeters) {
-            final Boolean shouldBeAdded;
-            if (radius == null) {
-                shouldBeAdded = true;
-            }
-            else if (!parkingMeter.hasLatitudeAndLongitude()) {
-                // when using radius, ignore any record with null lat/long
-                shouldBeAdded = false;
-            }
-            else {
-                final Double latitude = parkingMeter.getLatitude();
-                final Double longitude = parkingMeter.getLongitude();
-
-                final Double distance = GeoUtil.greatCircleDistanceInMeters(latitude, longitude, radiusLatitude, radiusLongitude);
-                shouldBeAdded = (distance <= radius);
-            }
-
-            if (shouldBeAdded) {
-                jsonResult.addParkingMeter(parkingMeter);
-            }
+        for (final ParkingMeter parkingMeter : locationFilteredParkingMeters) {
+            jsonResult.addParkingMeter(parkingMeter);
         }
 
         return new JsonResponse(Response.ResponseCodes.OK, jsonResult);
