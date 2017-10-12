@@ -2,7 +2,6 @@ package com.softwareverde.smartcity.api.parkingmeter;
 
 import com.softwareverde.database.DatabaseConnection;
 import com.softwareverde.database.DatabaseException;
-import com.softwareverde.database.Query;
 import com.softwareverde.database.Row;
 import com.softwareverde.geo.util.GeoUtil;
 import com.softwareverde.servlet.GetParameters;
@@ -16,7 +15,7 @@ import com.softwareverde.smartcity.api.parkingmeter.response.ListParkingMeterRes
 import com.softwareverde.smartcity.api.response.JsonResult;
 import com.softwareverde.smartcity.environment.Environment;
 import com.softwareverde.smartcity.parkingmeter.ParkingMeter;
-import com.softwareverde.smartcity.parkingmeter.ParkingMeterInflater;
+import com.softwareverde.smartcity.parkingmeter.ParkingMeterDatabaseAdapter;
 import com.softwareverde.smartcity.util.SmartCityUtil;
 import com.softwareverde.util.Util;
 
@@ -27,45 +26,38 @@ public class ParkingMeterApi implements Servlet {
     protected final Environment _environment;
 
     protected Response _getParkingMeterById(final PostParameters postParameters, final DatabaseConnection<Connection> databaseConnection) throws DatabaseException {
-        final ParkingMeterInflater parkingMeterInflater = new ParkingMeterInflater();
+        final ParkingMeterDatabaseAdapter parkingMeterDatabaseAdapter = new ParkingMeterDatabaseAdapter(databaseConnection);
 
         final List<Row> rows;
 
         final Long id = Util.parseLong(postParameters.get("id"));
         final String meterId = postParameters.get("meter_id");
 
+        ParkingMeter parkingMeter;
         if (id > 0) {
-            rows = databaseConnection.query(
-                new Query("SELECT * FROM parking_meters WHERE id = ?")
-                    .setParameter(id)
-            );
+            parkingMeter = parkingMeterDatabaseAdapter.inflateById(id);
         }
         else {
-            rows = databaseConnection.query(
-                new Query("SELECT * FROM parking_meters WHERE meter_id = ?")
-                    .setParameter(meterId)
-            );
+            parkingMeter = parkingMeterDatabaseAdapter.inflateByMeterId(meterId);
         }
 
-        if (rows.isEmpty()) {
+        if (parkingMeter == null) {
             return new JsonResponse(Response.ResponseCodes.BAD_REQUEST, new JsonResult(false, "Parking Meter Id not found."));
         }
 
         final GetParkingMeterResult jsonResult = new GetParkingMeterResult();
-        final ParkingMeter parkingMeter = parkingMeterInflater.fromRow(rows.get(0));
         jsonResult.setParkingMeter(parkingMeter);
 
         return new JsonResponse(Response.ResponseCodes.OK, jsonResult);
     }
 
     protected Response _listParkingMeters(final PostParameters postParameters, final DatabaseConnection<Connection> databaseConnection) throws DatabaseException {
-        final ParkingMeterInflater parkingMeterInflater = new ParkingMeterInflater();
+        final ParkingMeterDatabaseAdapter parkingMeterDatabaseAdapter = new ParkingMeterDatabaseAdapter(databaseConnection);
 
-        final List<Row> rows = databaseConnection.query("SELECT * FROM parking_meters", null);
+        final List<ParkingMeter> parkingMeters = parkingMeterDatabaseAdapter.inflateAll();
 
         final ListParkingMeterResult jsonResult = new ListParkingMeterResult();
-        for (final Row row : rows) {
-            final ParkingMeter parkingMeter = parkingMeterInflater.fromRow(row);
+        for (final ParkingMeter parkingMeter : parkingMeters) {
             jsonResult.addParkingMeter(parkingMeter);
         }
 
@@ -73,7 +65,7 @@ public class ParkingMeterApi implements Servlet {
     }
 
     protected Response _searchForParkingMeter(final PostParameters postParameters, final DatabaseConnection<Connection> databaseConnection) throws DatabaseException {
-        final ParkingMeterInflater parkingMeterInflater = new ParkingMeterInflater();
+        final ParkingMeterDatabaseAdapter parkingMeterDatabaseAdapter = new ParkingMeterDatabaseAdapter(databaseConnection);
 
         final Double radius = (postParameters.containsKey("radius") ? Util.parseDouble(postParameters.get("radius")) : null);
         final Double radiusLatitude = Util.parseDouble(postParameters.get("latitude"));
@@ -84,33 +76,13 @@ public class ParkingMeterApi implements Servlet {
         final Integer maxDwellDurationLessThan = (postParameters.containsKey("max_dwell_duration_less_than") ? Util.parseInt(postParameters.get("max_dwell_duration_less_than")) : null);
         final Float rateGreaterThan = (postParameters.containsKey("rate_greater_than") ? Util.parseFloat(postParameters.get("rate_greater_than")) : null);
         final Float rateLessThan = (postParameters.containsKey("rate_less_than") ? Util.parseFloat(postParameters.get("rate_less_than")) : null);
-        final Integer isHandicap = (postParameters.containsKey("is_handicap") ? (Util.parseBool(postParameters.get("is_handicap")) ? 1 : 0) : null);
-        final Integer isChargingStation = (postParameters.containsKey("is_charging_station") ? (Util.parseBool(postParameters.get("is_charging_station")) ? 1 : 0) : null);
+        final Boolean isHandicap = (postParameters.containsKey("is_handicap") ? Util.parseBool(postParameters.get("is_handicap")) : null);
+        final Boolean isChargingStation = (postParameters.containsKey("is_charging_station") ? Util.parseBool(postParameters.get("is_charging_station")) : null);
 
-        final List<Row> rows = databaseConnection.query(
-            "SELECT * FROM parking_meters WHERE"
-                +" (LENGTH(?) = 0 OR location LIKE ?)"
-                +" AND (LENGTH(?) = 0 OR max_dwell_duration >= ?)"
-                +" AND (LENGTH(?) = 0 OR max_dwell_duration <= ?)"
-                +" AND (LENGTH(?) = 0 OR rate >= ?)"
-                +" AND (LENGTH(?) = 0 OR rate <= ?)"
-                +" AND (LENGTH(?) = 0 OR is_handicap = ?)"
-                +" AND (LENGTH(?) = 0 OR is_charging_station = ?)",
-            new String[] {
-                SmartCityUtil.toEmptyStringIfNull(street),                       SmartCityUtil.toEmptyStringIfNull(street),
-                SmartCityUtil.toEmptyStringIfNull(maxDwellDurationGreaterThan),  SmartCityUtil.toEmptyStringIfNull(maxDwellDurationGreaterThan),
-                SmartCityUtil.toEmptyStringIfNull(maxDwellDurationLessThan),     SmartCityUtil.toEmptyStringIfNull(maxDwellDurationLessThan),
-                SmartCityUtil.toEmptyStringIfNull(rateGreaterThan),              SmartCityUtil.toEmptyStringIfNull(rateGreaterThan),
-                SmartCityUtil.toEmptyStringIfNull(rateLessThan),                 SmartCityUtil.toEmptyStringIfNull(rateLessThan),
-                SmartCityUtil.toEmptyStringIfNull(isHandicap),                   SmartCityUtil.toEmptyStringIfNull(isHandicap),
-                SmartCityUtil.toEmptyStringIfNull(isChargingStation),            SmartCityUtil.toEmptyStringIfNull(isChargingStation)
-            }
-        );
+        List<ParkingMeter> matchingParkingMeters = parkingMeterDatabaseAdapter.inflateBySearchCriteria(street, maxDwellDurationGreaterThan, maxDwellDurationLessThan, rateGreaterThan, rateLessThan, isHandicap, isChargingStation);
 
         final ListParkingMeterResult jsonResult = new ListParkingMeterResult();
-        for (final Row row : rows) {
-            final ParkingMeter parkingMeter = parkingMeterInflater.fromRow(row);
-
+        for (final ParkingMeter parkingMeter : matchingParkingMeters) {
             final Boolean shouldBeAdded;
             if (radius == null) {
                 shouldBeAdded = true;
