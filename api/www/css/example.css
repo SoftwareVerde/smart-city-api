@@ -1,0 +1,31 @@
+fieldset {
+    border: #000 solid 1px;
+}
+
+legend {
+    background-color: #70BF54;
+    color: #333;
+    padding: 4px;
+    border: #000 solid 1px;
+}
+
+#search-form label {
+    display: inline-block;
+    width: 100px;
+    padding: 10px 0px;
+}
+
+#search-form input {
+    width: 150px;
+}
+
+#search-form button {
+    margin-left: 100px;
+    margin-top: 10px;
+
+    width: 75px;
+    padding: 5px;
+    background-color: #70BF54;
+    border-color: #333;
+    color: #333;
+}

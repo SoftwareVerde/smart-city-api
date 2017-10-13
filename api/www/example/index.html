@@ -1,0 +1,28 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <link rel="stylesheet" href="/css/main.css" />
+        <link rel="stylesheet" href="/css/example.css" />
+        <script src="/js/jquery.min.js"></script>
+        <script async src="/js/example.js"></script>
+
+        <link href="https://fonts.googleapis.com/css?family=Bree+Serif|Roboto+Condensed" rel="stylesheet">
+    </head>
+    <body>
+        <fieldset id="search-container">
+            <legend>Parking Meter & Parking Ticket Search</legend>
+            <form id="search-form">
+                <label for="radius">Radius:</label>
+                <input id="radius" type="number" required min="0"/>
+                <br/>
+                <label for="latitude">Latitude:</label>
+                <input id="latitude" type="number" required min="-90" max="90"/>
+                <br/>
+                <label for="longitude">Longitude:</label>
+                <input id="longitude" type="number" required min="-180" max="180"/>
+                <br/>
+                <button id="search-button">Search</button>
+            </form>
+        </fieldset>
+    </body>
+</html>
