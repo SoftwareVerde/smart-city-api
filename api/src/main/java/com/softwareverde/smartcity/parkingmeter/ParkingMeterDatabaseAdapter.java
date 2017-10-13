@@ -102,7 +102,7 @@ public class ParkingMeterDatabaseAdapter {
         parkingMeter.setLocation(row.getString("location"));
         parkingMeter.setMaxDwellDuration(row.getLong("max_dwell_duration"));
         parkingMeter.setIsHandicap(row.getBoolean("is_handicap"));
-        parkingMeter.setRateTimes100(row.getLong("rate") * 100L);
+        parkingMeter.setRateTimes100((long)(row.getDouble("rate") * 100L));
         parkingMeter.setIsChargingStation(row.getBoolean("is_charging_station"));
         parkingMeter.setLatitude(row.getDouble("latitude"));
         parkingMeter.setLongitude(row.getDouble("longitude"));
