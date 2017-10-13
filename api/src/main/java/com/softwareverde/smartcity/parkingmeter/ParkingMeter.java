@@ -8,8 +8,8 @@ public class ParkingMeter {
     protected Boolean _isHandicap;
     protected Long _rateTimes100;
     protected Boolean _isChargingStation;
-    protected Float _latitude;
-    protected Float _longitude;
+    protected Double _latitude;
+    protected Double _longitude;
 
     public ParkingMeter() { }
 
@@ -34,11 +34,11 @@ public class ParkingMeter {
     public void setIsChargingStation(final Boolean isChargingStation) { _isChargingStation = isChargingStation; }
     public Boolean isChargingStation() { return _isChargingStation; }
 
-    public void setLatitude(final Float latitude) { _latitude = latitude; }
-    public Float getLatitude() { return _latitude; }
+    public void setLatitude(final Double latitude) { _latitude = latitude; }
+    public Double getLatitude() { return _latitude; }
 
-    public void setLongitude(final Float longitude) { _longitude = longitude; }
-    public Float getLongitude() { return _longitude; }
+    public void setLongitude(final Double longitude) { _longitude = longitude; }
+    public Double getLongitude() { return _longitude; }
 
     public boolean hasLatitudeAndLongitude() {
         return _latitude != null && _longitude != null;

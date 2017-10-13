@@ -1,15 +1,15 @@
 package com.softwareverde.smartcity.api.parkingmeter.response;
 
-import com.softwareverde.smartcity.api.response.JsonResult;
 import com.softwareverde.json.Json;
+import com.softwareverde.smartcity.api.response.JsonResult;
 import com.softwareverde.smartcity.parkingmeter.ParkingMeter;
-import com.softwareverde.smartcity.parkingmeter.ParkingMeterInflater;
+import com.softwareverde.smartcity.parkingmeter.ParkingMeterJsonAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class ListParkingMeterResult extends JsonResult {
-    protected final ParkingMeterInflater _parkingMeterInflater = new ParkingMeterInflater();
+    protected final ParkingMeterJsonAdapter _parkingMeterJsonAdapter = new ParkingMeterJsonAdapter();
     protected final List<ParkingMeter> _parkingMeters = new ArrayList<ParkingMeter>();
 
     public ListParkingMeterResult() {
@@ -29,7 +29,7 @@ public class ListParkingMeterResult extends JsonResult {
 
         final Json parkingMetersJson = new Json();
         for (final ParkingMeter parkingMeter : _parkingMeters) {
-            final Json parkingMeterJson = _parkingMeterInflater.toJson(parkingMeter);
+            final Json parkingMeterJson = _parkingMeterJsonAdapter.toJson(parkingMeter);
             parkingMetersJson.add(parkingMeterJson);
         }
         json.put("parkingMeters", parkingMetersJson);
