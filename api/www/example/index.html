@@ -13,16 +13,17 @@
             <legend>Parking Meter & Parking Ticket Search</legend>
             <form id="search-form">
                 <label for="radius">Radius:</label>
-                <input id="radius" type="number" required min="0"/>
+                <input id="radius" name="radius" type="number" required min="0"/>
                 <br/>
                 <label for="latitude">Latitude:</label>
-                <input id="latitude" type="number" required min="-90" max="90"/>
+                <input id="latitude" name="latitude" type="number" required min="-90" max="90" step="0.00001"/>
                 <br/>
                 <label for="longitude">Longitude:</label>
-                <input id="longitude" type="number" required min="-180" max="180"/>
+                <input id="longitude" name="longitude" type="number" required min="-180" max="180" step="0.00001"/>
                 <br/>
                 <button id="search-button">Search</button>
             </form>
         </fieldset>
+        <div id="results-container"></div>
     </body>
 </html>

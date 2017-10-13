@@ -29,3 +29,11 @@ legend {
     border-color: #333;
     color: #333;
 }
+
+.result {
+    display: inline-block;
+    margin: 10px;
+    border: #FFF solid thin;
+    padding: 5px;
+    min-width: 120px;
+}
