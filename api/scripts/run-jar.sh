@@ -1,5 +1,7 @@
 #!/bin/bash
 
-cd out
+SCRIPTS_DIR="$(dirname $0)"
+cd $SCRIPTS_DIR/../out
+
 ./run.sh
 
