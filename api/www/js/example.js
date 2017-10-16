@@ -10,7 +10,7 @@ function initMap() {
     const columbus = new google.maps.LatLng(latitude, longitude);
 
     searchMap = new google.maps.Map(document.getElementById("search-map"), {
-        zoom: 13,
+        zoom: 14,
         center: columbus,
         mapTypeId: 'roadmap',
         mapTypeControl: false
@@ -24,6 +24,7 @@ function initMap() {
         fillOpacity: 0.1,
         map: searchMap,
         center: columbus,
+        editable: true,
         draggable: true,
         radius: searchRadius
     });
@@ -39,16 +40,17 @@ function initMap() {
         document.getElementById('longitude').value = longitude;
     });
 
-    searchRadiusCircle.addListener('dragend', function (event) {
-        // update radius
+    searchRadiusCircle.addListener('radius_changed', function (event) {
         const newRadius = searchRadiusCircle.getRadius();
         document.getElementById('radius').value = newRadius;
-        // update lat/long
+    });
+
+    searchRadiusCircle.addListener('center_changed', function (event) {
         const newCenter = searchRadiusCircle.getCenter();
         const newLatitude = newCenter.lat();
         const newLongitude = newCenter.lng();
         document.getElementById('latitude').value = newLatitude;
-         document.getElementById('longitude').value = newLongitude;
+        document.getElementById('longitude').value = newLongitude;
     });
 }
 

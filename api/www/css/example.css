@@ -19,6 +19,17 @@ legend {
     height: 400px;
 }
 
+#instructions {
+    display: table;
+    text-align: center;
+
+    margin: 10px auto;
+    padding: 5px;
+
+    border: #000 solid thin;
+    background-color: #555;
+}
+
 #search-form {
     width: 300px;
     margin: auto;
