@@ -4,26 +4,43 @@
         <link rel="stylesheet" href="/css/main.css" />
         <link rel="stylesheet" href="/css/example.css" />
         <script src="/js/jquery.min.js"></script>
-        <script async src="/js/example.js"></script>
+        <script src="/js/example.js"></script>
+        <script async defer src="https://maps.googleapis.com/maps/api/js?v=3&key=AIzaSyD2QCaT7e2wWTHLVwwNgZXbuzM2I1NpavA&callback=initMap"></script>
 
         <link href="https://fonts.googleapis.com/css?family=Bree+Serif|Roboto+Condensed" rel="stylesheet">
     </head>
     <body>
         <fieldset id="search-container">
             <legend>Parking Meter & Parking Ticket Search</legend>
+
+            <div id="search-map"></div>
+
             <form id="search-form">
-                <label for="radius">Radius:</label>
-                <input id="radius" name="radius" type="number" required min="0"/>
+                <label for="radius">Radius (in meters):</label>
+                <input id="radius" name="radius" type="number" required min="0" value="500"/>
                 <br/>
                 <label for="latitude">Latitude:</label>
-                <input id="latitude" name="latitude" type="number" required min="-90" max="90" step="0.00001"/>
+                <input id="latitude" name="latitude" type="text" required pattern="[-+]?[0-9]+(\.[0-9]*)?" value="40.0"/>
                 <br/>
                 <label for="longitude">Longitude:</label>
-                <input id="longitude" name="longitude" type="number" required min="-180" max="180" step="0.00001"/>
+                <input id="longitude" name="longitude" type="text" required pattern="[-+]?[0-9]+(\.[0-9]*)?" value="-83.0"/>
+                <br/>
+                <label for="include-meters">Include Meters:</label>
+                <input id="include-meters" name="include-meters" type="checkbox" checked/>
+                <br/>
+                <label for="include-tickets">Include Meters:</label>
+                <input id="include-tickets" name="include-tickets" type="checkbox"/>
                 <br/>
                 <button id="search-button">Search</button>
             </form>
         </fieldset>
-        <div id="results-container"></div>
+        <div id="results-container">
+            <h3>Parking Meters</h3>
+            <div id="parking-meters">
+            </div>
+            <h3>Parking Tickets</h3>
+            <div id="parking-tickets">
+            </div>
+        </div>
     </body>
 </html>

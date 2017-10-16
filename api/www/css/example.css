@@ -1,3 +1,8 @@
+html, body {
+    min-height: 100%;
+    width: 100%;
+}
+
 fieldset {
     border: #000 solid 1px;
 }
@@ -9,13 +14,23 @@ legend {
     border: #000 solid 1px;
 }
 
+#search-map {
+    background-color: grey;
+    height: 400px;
+}
+
+#search-form {
+    width: 300px;
+    margin: auto;
+}
+
 #search-form label {
     display: inline-block;
-    width: 100px;
+    width: 140px;
     padding: 10px 0px;
 }
 
-#search-form input {
+#search-form input[type="text"] {
     width: 150px;
 }
 
@@ -28,6 +43,10 @@ legend {
     background-color: #70BF54;
     border-color: #333;
     color: #333;
+}
+
+#results-container {
+    visibility: hidden;
 }
 
 .result {
