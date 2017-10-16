@@ -24,6 +24,7 @@ function initMap() {
         fillOpacity: 0.1,
         map: searchMap,
         center: columbus,
+        draggable: true,
         radius: searchRadius
     });
 
@@ -36,6 +37,18 @@ function initMap() {
         const longitude = clickLocation.lng();
         document.getElementById('latitude').value = latitude;
         document.getElementById('longitude').value = longitude;
+    });
+
+    searchRadiusCircle.addListener('dragend', function (event) {
+        // update radius
+        const newRadius = searchRadiusCircle.getRadius();
+        document.getElementById('radius').value = newRadius;
+        // update lat/long
+        const newCenter = searchRadiusCircle.getCenter();
+        const newLatitude = newCenter.lat();
+        const newLongitude = newCenter.lng();
+        document.getElementById('latitude').value = newLatitude;
+         document.getElementById('longitude').value = newLongitude;
     });
 }
 
