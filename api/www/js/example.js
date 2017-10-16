@@ -79,7 +79,7 @@ function addMarker(marker) {
     markers.push(marker);
 }
 
-function findParkingMeters(formData) {
+function findParkingMeters(formData, callbackFunction) {
     $.post('/api/v1/parking-meters?search=1', formData, function (data) {
         for (let i in data.parkingMeters) {
             const parkingMeter = data.parkingMeters[i];
@@ -101,10 +101,13 @@ function findParkingMeters(formData) {
             });
             addMarker(meterMarker);
         }
+        if (typeof callbackFunction == "function") {
+            callbackFunction();
+        }
     });
 }
 
-function findParkingTickets(formData) {
+function findParkingTickets(formData, callbackFunction) {
     $.post('/api/v1/parking-tickets?search=1', formData, function (data) {
         for (let i in data.parkingTickets) {
             const parkingTicket = data.parkingTickets[i];
@@ -131,7 +134,14 @@ function findParkingTickets(formData) {
             });
             addMarker(meterMarker);
         }
+        if (typeof callbackFunction == "function") {
+            callbackFunction();
+        }
     });
+}
+
+function setSearchButtonHtml(html) {
+    $('#search-button').html(html);
 }
 
 $(function () {
@@ -149,6 +159,8 @@ $(function () {
         // prevent standard form submission
         event.preventDefault();
 
+        setSearchButtonHtml("<i class=\"fa fa-spin fa-refresh\"></i>");
+
         const includeMeters = $('#include-meters').is(':checked');
         const includeTickets = $('#include-tickets').is(':checked');
 
@@ -159,13 +171,26 @@ $(function () {
 
         // perform search
         const formData = $('#search-form').serialize();
+        const dataLoaded = {};
+        dataLoaded.meters = !includeMeters;
+        dataLoaded.tickets = !includeTickets;
         // meters
         if (includeMeters) {
-            findParkingMeters(formData);
+            findParkingMeters(formData, function() {
+                dataLoaded.meters = true;
+                if (dataLoaded.tickets) {
+                    setSearchButtonHtml("Search");
+                }
+            });
         }
         // tickets
         if (includeTickets) {
-            findParkingTickets(formData);
+            findParkingTickets(formData, function() {
+               dataLoaded.tickets = true;
+               if (dataLoaded.meters) {
+                   setSearchButtonHtml("Search");
+               }
+           });
         }
 
         $('#results-container').css('visibility', 'visible');

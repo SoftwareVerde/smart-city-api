@@ -4,14 +4,14 @@ html, body {
 }
 
 fieldset {
-    border: #000 solid 1px;
+    border: #FFF solid 1px;
 }
 
 legend {
     background-color: #70BF54;
     color: #333;
     padding: 4px;
-    border: #000 solid 1px;
+    border: #FFF solid 1px;
 }
 
 #search-map {
@@ -31,13 +31,13 @@ legend {
 }
 
 #search-form {
-    width: 300px;
+    width: 400px;
     margin: auto;
 }
 
 #search-form label {
     display: inline-block;
-    width: 140px;
+    width: 200px;
     padding: 10px 0px;
 }
 
@@ -46,7 +46,7 @@ legend {
 }
 
 #search-form button {
-    margin-left: 100px;
+    margin-left: 200px;
     margin-top: 10px;
 
     width: 75px;
