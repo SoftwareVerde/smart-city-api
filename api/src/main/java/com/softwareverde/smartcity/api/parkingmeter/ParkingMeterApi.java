@@ -78,7 +78,7 @@ public class ParkingMeterApi implements Servlet {
         final Boolean isHandicap = (postParameters.containsKey("is_handicap") ? Util.parseBool(postParameters.get("is_handicap")) : null);
         final Boolean isChargingStation = (postParameters.containsKey("is_charging_station") ? Util.parseBool(postParameters.get("is_charging_station")) : null);
 
-        List<ParkingMeter> matchingParkingMeters = parkingMeterDatabaseAdapter.inflateBySearchCriteria(street, maxDwellDurationGreaterThan, maxDwellDurationLessThan, rateGreaterThan, rateLessThan, isHandicap, isChargingStation);
+        List<ParkingMeter> matchingParkingMeters = parkingMeterDatabaseAdapter.inflateBySearchCriteria(radius, radiusLatitude, radiusLongitude, street, maxDwellDurationGreaterThan, maxDwellDurationLessThan, rateGreaterThan, rateLessThan, isHandicap, isChargingStation);
         Collection<ParkingMeter> locationFilteredParkingMeters = GeoUtil.filterByLocation(matchingParkingMeters, new ParkingMeterLocationExtractor(), radius, radiusLatitude, radiusLongitude);
 
         final ListParkingMeterResult jsonResult = new ListParkingMeterResult();

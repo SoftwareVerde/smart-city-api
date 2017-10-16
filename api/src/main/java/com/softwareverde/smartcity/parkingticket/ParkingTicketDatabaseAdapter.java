@@ -4,6 +4,7 @@ import com.softwareverde.database.DatabaseConnection;
 import com.softwareverde.database.DatabaseException;
 import com.softwareverde.database.Query;
 import com.softwareverde.database.Row;
+import com.softwareverde.geo.util.GeoUtil;
 import com.softwareverde.smartcity.licenseplate.LicensePlate;
 import com.softwareverde.smartcity.licenseplate.LicensePlateDatabaseAdapter;
 import com.softwareverde.smartcity.util.SmartCityUtil;
@@ -62,14 +63,29 @@ public class ParkingTicketDatabaseAdapter {
         }
     }
 
-    public List<ParkingTicket> inflateBySearchCriteria(final String street, final Date dateAfter, final Date dateBefore, final String licensePlateNumber, final String licensePlateState, final String violationCode, final Double fineAmountGreaterThan, final Double fineAmountLessThan, final Double paidAmountGreaterThan, final Double paidAmountLessThan, final Double dueAmountGreaterThan, final Double dueAmountLessThan, final String disposition) throws DatabaseException {
+    public List<ParkingTicket> inflateBySearchCriteria(final Double radius, final Double latitude, final Double longitude, final String street, final Date dateAfter, final Date dateBefore, final String licensePlateNumber, final String licensePlateState, final String violationCode, final Double fineAmountGreaterThan, final Double fineAmountLessThan, final Double paidAmountGreaterThan, final Double paidAmountLessThan, final Double dueAmountGreaterThan, final Double dueAmountLessThan, final String disposition) throws DatabaseException {
         SimpleDateFormat mysqlDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         final String dateAfterString = dateAfter == null ? null : mysqlDateFormat.format(dateAfter);
         final String dateBeforeString = dateBefore == null ? null : mysqlDateFormat.format(dateBefore);
 
+        Double latitudeMax = null;
+        Double latitudeMin = null;
+        Double longitudeMax = null;
+        Double longitudeMin = null;
+        if (radius != null) {
+            latitudeMax = latitude == null ? null : GeoUtil.addMetersToLatitude(latitude, longitude, radius);
+            latitudeMin = latitude == null ? null : GeoUtil.addMetersToLatitude(latitude, longitude, -radius);
+            longitudeMax = longitude == null ? null : GeoUtil.addMetersToLongitude(latitude, longitude, radius);
+            longitudeMin = longitude == null ? null : GeoUtil.addMetersToLongitude(latitude, longitude, -radius);
+        }
+
         final List<Row> rows = _databaseConnection.query(
                 "SELECT *, license_plates.number AS license_plate_number, license_plates.state AS license_plate_state FROM parking_tickets LEFT OUTER JOIN license_plates ON license_plates.id = parking_tickets.license_plate_id WHERE"
                         +" (LENGTH(?) = 0 OR location LIKE ?)"
+                        +" AND (LENGTH(?) = 0 OR latitude <= ?)"
+                        +" AND (LENGTH(?) = 0 OR latitude >= ?)"
+                        +" AND (LENGTH(?) = 0 OR longitude <= ?)"
+                        +" AND (LENGTH(?) = 0 OR longitude >= ?)"
                         +" AND (LENGTH(?) = 0 OR date >= CAST(? AS DATE))"
                         +" AND (LENGTH(?) = 0 OR date <= CAST(? AS DATE))"
                         +" AND (LENGTH(?) = 0 OR license_plates.number LIKE ?)"
@@ -84,6 +100,10 @@ public class ParkingTicketDatabaseAdapter {
                         +" AND (LENGTH(?) = 0 OR disposition LIKE ?)",
                 new String[] {
                         SmartCityUtil.toEmptyStringIfNull(street),                  SmartCityUtil.toEmptyStringIfNull(street),
+                        SmartCityUtil.toEmptyStringIfNull(latitudeMax),             SmartCityUtil.toEmptyStringIfNull(latitudeMax),
+                        SmartCityUtil.toEmptyStringIfNull(latitudeMin),             SmartCityUtil.toEmptyStringIfNull(latitudeMin),
+                        SmartCityUtil.toEmptyStringIfNull(longitudeMax),            SmartCityUtil.toEmptyStringIfNull(longitudeMax),
+                        SmartCityUtil.toEmptyStringIfNull(longitudeMin),            SmartCityUtil.toEmptyStringIfNull(longitudeMin),
                         SmartCityUtil.toEmptyStringIfNull(dateAfter),               SmartCityUtil.toEmptyStringIfNull(dateAfterString),
                         SmartCityUtil.toEmptyStringIfNull(dateBefore),              SmartCityUtil.toEmptyStringIfNull(dateBeforeString),
                         SmartCityUtil.toEmptyStringIfNull(licensePlateNumber),      SmartCityUtil.toEmptyStringIfNull(licensePlateNumber),

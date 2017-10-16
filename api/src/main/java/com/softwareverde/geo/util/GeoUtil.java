@@ -5,9 +5,10 @@ import java.util.Collection;
 import java.util.List;
 
 public class GeoUtil {
-
     public static final double EARTH_RADIUS_IN_KM = 6378.137D;
+    public static final double EARTH_RADIUS_IN_M = EARTH_RADIUS_IN_KM * 1000;
     public static final double DEGREES_TO_RADIANS = Math.PI / 180D;
+    public static final double RADIANS_TO_DEGREES = 180D / Math.PI;
 
     /**
      * <p>Uses the <a href="http://www.movable-type.co.uk/scripts/latlong.html">haversine formula</a> to determine the
@@ -56,5 +57,44 @@ public class GeoUtil {
             }
         }
         return filteredList;
+    }
+
+    /**
+     * <p>Returns the latitude <code>meters</code> north of <code>latitude</code>.</p>
+     *
+     * <p>Should not be used for large distances the earth is not perfectly spherical.</p>
+     *
+     * @param latitude
+     * @param longitude
+     * @param meters
+     * @return
+     */
+    public static double addMetersToLatitude(final double latitude, final double longitude, final double meters) {
+        final double offset = (meters / EARTH_RADIUS_IN_M) * RADIANS_TO_DEGREES;
+        double newLatitude = latitude + offset;
+        if (newLatitude > 90) {
+            newLatitude = newLatitude - 180;
+        }
+        return newLatitude;
+    }
+
+    /**
+     * <p>Returns the longitude <code>meters</code> east of <code>longitude</code> at <code>latitude</code>.</p>
+     *
+     * <p>The latitude is required because </p>
+     *
+     * <p>Should not be used for large distances the earth is not perfectly spherical.</p>
+     *
+     * @param latitude
+     * @param meters
+     * @return
+     */
+    public static double addMetersToLongitude(final double latitude, final double longitude, final double meters) {
+        final double offset = (meters / EARTH_RADIUS_IN_M) * RADIANS_TO_DEGREES / Math.cos(latitude * DEGREES_TO_RADIANS);
+        double newLongitude = longitude + offset;
+        if (newLongitude > 180) {
+            newLongitude = newLongitude - 360;
+        }
+        return newLongitude;
     }
 }
