@@ -1,11 +1,16 @@
+
+const TICKET_COLOR_MAX = 30.0;
+const TICKET_MAP_SEGMENTS = 15;
+
 var searchMap;
 var searchRadiusCircle;
 var markers = [];
+var squares = [];
 
 function initMap() {
-    const searchRadius = parseInt(document.getElementById('radius').value);
-    const latitude = document.getElementById('latitude').value;
-    const longitude = document.getElementById('longitude').value;
+    const searchRadius = getRadius();
+    const latitude = getLatitude();
+    const longitude = getLongitude();
 
     const columbus = new google.maps.LatLng(latitude, longitude);
 
@@ -17,10 +22,10 @@ function initMap() {
     });
 
     searchRadiusCircle = new google.maps.Circle({
-        strokeColor: '#FF0000',
-        strokeOpacity: 0.8,
+        strokeColor: '#333333',
+        strokeOpacity: 0.4,
         strokeWeight: 1,
-        fillColor: '#FF0000',
+        fillColor: '#333333',
         fillOpacity: 0.1,
         map: searchMap,
         center: columbus,
@@ -54,10 +59,25 @@ function initMap() {
     });
 }
 
+function getRadius() {
+    const searchRadius = parseFloat(document.getElementById('radius').value);
+    return searchRadius;
+}
+
+function getLatitude() {
+    const latitude = parseFloat(document.getElementById('latitude').value);
+    return latitude;
+}
+
+function getLongitude() {
+    const longitude = parseFloat(document.getElementById('longitude').value);
+    return longitude;
+}
+
 function renderSearchCircle() {
-    const searchRadius = parseInt(document.getElementById('radius').value);
-    const latitude = document.getElementById('latitude').value;
-    const longitude = document.getElementById('longitude').value;
+    const searchRadius = getRadius();
+    const latitude = getLatitude();
+    const longitude = getLongitude();
 
     const newCenter = new google.maps.LatLng(latitude, longitude);
 
@@ -65,13 +85,19 @@ function renderSearchCircle() {
     searchRadiusCircle.setRadius(searchRadius);
 }
 
-function clearMarkers() {
+function clearMap() {
     for (let i in markers) {
         const marker = markers[i];
         // remove from map
         marker.setMap(null);
     }
+    for (let i in squares) {
+        const square = squares[i];
+        // remove from map
+        square.setMap(null);
+    }
     markers = [];
+    squares = [];
 }
 
 function addMarker(marker) {
@@ -79,26 +105,21 @@ function addMarker(marker) {
     markers.push(marker);
 }
 
+function addSquare(square) {
+    square.setMap(searchMap);
+    squares.push(square);
+}
+
 function findParkingMeters(formData, callbackFunction) {
     $.post('/api/v1/parking-meters?search=1', formData, function (data) {
         for (let i in data.parkingMeters) {
             const parkingMeter = data.parkingMeters[i];
-            $('#parking-meters').append("<div class=\"result\">"
-                                                + "Meter " + parkingMeter.meterId
-                                                + "<br/>"
-                                                + (parkingMeter.isHandicap ? "Handicapped<br/>" : "")
-                                                + (parkingMeter.isChargingStation ? "Charging Station<br/>" : "")
-                                                + parkingMeter.location
-                                                + "<br/>"
-                                                + "Max Time: " + parkingMeter.maxDwellDuration + " min"
-                                                + "<br/>"
-                                                + "Rate (Full): $" + (parkingMeter.rateTimes100 / 100).toFixed(2)
-                                            + "</div>");
             // add marker
             const meterMarker = new google.maps.Marker({
                 position: new google.maps.LatLng(parkingMeter.latitude, parkingMeter.longitude),
                 label: "M"
             });
+            // TODO: use images to designate normal meters, charging stations, and handicap meters
             addMarker(meterMarker);
         }
         if (typeof callbackFunction == "function") {
@@ -107,33 +128,78 @@ function findParkingMeters(formData, callbackFunction) {
     });
 }
 
+function determineSquareColor(ticketSquare) {
+    const ticketCount = ticketSquare.tickets.length;
+    return getColorForPercentage(Math.min(ticketCount, TICKET_COLOR_MAX) / TICKET_COLOR_MAX);
+}
+
+function drawSquares(ticketSquares) {
+    for (let i in ticketSquares) {
+        const ticketSquare = ticketSquares[i];
+
+        if (ticketSquare.tickets.length > 0) {
+            const color = determineSquareColor(ticketSquare);
+
+            const mapSquare = new google.maps.Rectangle({
+                strokeColor: color,
+                strokeOpacity: 0.35,
+                strokeWeight: 0,
+                fillColor: color,
+                fillOpacity: 0.35,
+                clickable: false,
+                bounds: {
+                    north: ticketSquare.north,
+                    south: ticketSquare.south,
+                    west: ticketSquare.west,
+                    east: ticketSquare.east
+                }
+            });
+
+            addSquare(mapSquare);
+        }
+    }
+}
+
 function findParkingTickets(formData, callbackFunction) {
     $.post('/api/v1/parking-tickets?search=1', formData, function (data) {
+        const radius = getRadius();
+        const centerLatitude = getLatitude();
+        const centerLongitude = getLongitude();
+
+        const startLatitude = addMetersToLatitude(centerLatitude, centerLongitude, -radius);
+        const endLatitude = addMetersToLatitude(centerLatitude, centerLongitude, radius);
+        const latitudeDifferential = (endLatitude - startLatitude) / TICKET_MAP_SEGMENTS;
+
+        const startLongitude = addMetersToLongitude(centerLatitude, centerLongitude, -radius);
+        const endLongitude = addMetersToLongitude(centerLatitude, centerLongitude, radius);
+        const longitudeDifferential = (endLongitude - startLongitude) / TICKET_MAP_SEGMENTS;
+
+        const ticketSquares = [];
         for (let i in data.parkingTickets) {
             const parkingTicket = data.parkingTickets[i];
-            $('#parking-tickets').append("<div class=\"result\">"
-                                                + "Ticket " + parkingTicket.ticketNumber
-                                                + "<br/>"
-                                                + parkingTicket.licensePlate.number
-                                                + "<br/>"
-                                                + parkingTicket.location
-                                                + "<br/>"
-                                                + "Fine Amount: $" + parkingTicket.fineAmount
-                                                + "<br/>"
-                                                + "Paid Amount: $" + parkingTicket.paidAmount
-                                                + "<br/>"
-                                                + "Due Amount: $" + parkingTicket.dueAmount
-                                                + "<br/>"
-                                                + "Disposition: " + parkingTicket.disposition
-                                                + "<br/>"
-                                            + "</div>");
-            // add marker
-            const meterMarker = new google.maps.Marker({
-                position: new google.maps.LatLng(parkingTicket.latitude, parkingTicket.longitude),
-                label: "T"
-            });
-            addMarker(meterMarker);
+
+            const latitudeIndex = Math.floor((parkingTicket.latitude - startLatitude) / latitudeDifferential);
+            const longitudeIndex = Math.floor((parkingTicket.longitude - startLongitude) / longitudeDifferential);
+
+            const index = latitudeIndex + TICKET_MAP_SEGMENTS * longitudeIndex;
+
+            const latitude = startLatitude + latitudeIndex * latitudeDifferential;
+            const longitude = startLongitude + longitudeIndex * longitudeDifferential;
+
+            if (!ticketSquares[index]) {
+                ticketSquares[index] = {
+                    north: latitude,
+                    south: latitude + latitudeDifferential,
+                    west: longitude,
+                    east: longitude + longitudeDifferential,
+                    tickets: []
+                };
+            }
+            ticketSquares[index].tickets.push(parkingTicket);
         }
+
+        drawSquares(ticketSquares);
+
         if (typeof callbackFunction == "function") {
             callbackFunction();
         }
@@ -167,7 +233,7 @@ $(function () {
         // clear current results
         $('#parking-meters').html('');
         $('#parking-tickets').html('');
-        clearMarkers();
+        clearMap();
 
         // perform search
         const formData = $('#search-form').serialize();

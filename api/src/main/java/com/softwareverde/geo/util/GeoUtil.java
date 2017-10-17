@@ -72,16 +72,19 @@ public class GeoUtil {
     public static double addMetersToLatitude(final double latitude, final double longitude, final double meters) {
         final double offset = (meters / EARTH_RADIUS_IN_M) * RADIANS_TO_DEGREES;
         double newLatitude = latitude + offset;
+        // positive overflow
         if (newLatitude > 90) {
             newLatitude = newLatitude - 180;
+        }
+        // negative overflow
+        if (newLatitude < -90) {
+            newLatitude = newLatitude + 180;
         }
         return newLatitude;
     }
 
     /**
      * <p>Returns the longitude <code>meters</code> east of <code>longitude</code> at <code>latitude</code>.</p>
-     *
-     * <p>The latitude is required because </p>
      *
      * <p>Should not be used for large distances the earth is not perfectly spherical.</p>
      *
@@ -92,8 +95,13 @@ public class GeoUtil {
     public static double addMetersToLongitude(final double latitude, final double longitude, final double meters) {
         final double offset = (meters / EARTH_RADIUS_IN_M) * RADIANS_TO_DEGREES / Math.cos(latitude * DEGREES_TO_RADIANS);
         double newLongitude = longitude + offset;
+        // positive overflow
         if (newLongitude > 180) {
             newLongitude = newLongitude - 360;
+        }
+        // negative overflow
+        if (newLongitude < -180) {
+            newLongitude = newLongitude + 360;
         }
         return newLongitude;
     }
