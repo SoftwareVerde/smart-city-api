@@ -136,7 +136,8 @@ function findParkingMeters(formData, callbackFunction) {
 
             const meterMarker = new google.maps.Marker({
                 position: new google.maps.LatLng(parkingMeter.latitude, parkingMeter.longitude),
-                icon: icon
+                icon: icon,
+                clickable: false
             });
             addMarker(meterMarker);
         }
