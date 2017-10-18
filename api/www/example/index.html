@@ -18,6 +18,31 @@
         <div id="search-map"></div>
         <div id="instructions">Click anywhere to move search area.  The search area can also be dragged and re-sized.  Click the search button below to see the results.</div>
 
+        <div id="legend">
+            <table>
+                <tr>
+                    <td colspan="2">
+                        <div style="text-align: center;">Parking Ticket Density</div>
+                        <div id="ticket-gradient"></div>
+                        <span style="float: left">1</span>
+                        <span style="float: right">30</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td><img src="/img/black-dot.svg"/></td>
+                    <td>Normal Parking Meter</td>
+                </tr>
+                <tr>
+                    <td><img src="/img/blue-dot.svg"/></td>
+                    <td>Handicap Parking Meter</td>
+                </tr>
+                <tr>
+                    <td><img src="/img/yellow-dot.svg"/></td>
+                    <td>Charging Station Parking Meter</td>
+                </tr>
+            </table>
+        </div>
+
         <form id="search-form">
             <label for="radius">Radius (in meters):</label>
             <input id="radius" name="radius" type="text" required pattern="[-+]?[0-9]+(\.[0-9]*)?" value="500"/>

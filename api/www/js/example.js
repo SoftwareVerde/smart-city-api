@@ -38,6 +38,7 @@ function initMap() {
         const clickLocation = event.latLng;
         // recenter search circle
         searchRadiusCircle.setCenter(clickLocation);
+        searchRadiusCircle.setMap(searchMap)
         // update inputs
         const latitude = clickLocation.lat();
         const longitude = clickLocation.lng();
@@ -83,6 +84,8 @@ function renderSearchCircle() {
 
     searchRadiusCircle.setCenter(newCenter);
     searchRadiusCircle.setRadius(searchRadius);
+
+    searchRadiusCircle.setMap(searchMap);
 }
 
 function clearMap() {
@@ -110,16 +113,31 @@ function addSquare(square) {
     squares.push(square);
 }
 
+function getParkingMeterIcon(parkingMeter) {
+    let url = '/img/black-dot.svg';
+    if (parkingMeter.isHandicap) {
+        url = '/img/blue-dot.svg';
+    } else if (parkingMeter.isChargingStation) {
+        url = '/img/yellow-dot.svg';
+    }
+
+    return {
+        url: url,
+        scaledSize: new google.maps.Size(5, 5)
+    };
+}
+
 function findParkingMeters(formData, callbackFunction) {
     $.post('/api/v1/parking-meters?search=1', formData, function (data) {
         for (let i in data.parkingMeters) {
             const parkingMeter = data.parkingMeters[i];
             // add marker
+            const icon = getParkingMeterIcon(parkingMeter);
+
             const meterMarker = new google.maps.Marker({
                 position: new google.maps.LatLng(parkingMeter.latitude, parkingMeter.longitude),
-                label: "M"
+                icon: icon
             });
-            // TODO: use images to designate normal meters, charging stations, and handicap meters
             addMarker(meterMarker);
         }
         if (typeof callbackFunction == "function") {
@@ -224,6 +242,9 @@ $(function () {
     $('#search-form').submit(function (event) {
         // prevent standard form submission
         event.preventDefault();
+
+        // temporarily stop displaying the circle
+        searchRadiusCircle.setMap(null);
 
         setSearchButtonHtml("<i class=\"fa fa-spin fa-refresh\"></i>");
 

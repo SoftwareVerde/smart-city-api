@@ -1,6 +1,7 @@
 html, body {
     min-height: 100%;
     width: 100%;
+    min-width: 1000px;
     margin: 0px;
 }
 
@@ -56,4 +57,28 @@ legend {
     background-color: #70BF54;
     border-color: #333;
     color: #333;
+}
+
+#legend {
+    float: left;
+    margin: 10px;
+
+    border: #000 solid thin;
+    background-color: #555;
+}
+
+#ticket-gradient {
+    height: 1em;
+    background: -webkit-linear-gradient(to right, #00FF00, #FFFF00, #FF0000);
+    background:    -moz-linear-gradient(to right, #00FF00, #FFFF00, #FF0000);
+    background:      -o-linear-gradient(to right, #00FF00, #FFFF00, #FF0000);
+    background:         linear-gradient(to right, #00FF00, #FFFF00, #FF0000);
+}
+
+#legend table img {
+    height: 10px;
+}
+
+#legend table td {
+    padding: 5px;
 }
