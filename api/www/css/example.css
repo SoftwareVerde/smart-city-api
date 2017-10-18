@@ -19,6 +19,8 @@ legend {
 #search-map {
     background-color: grey;
     height: 400px;
+    width: calc(100% - 20px);
+    margin: 0px 10px;
 }
 
 #instructions {
