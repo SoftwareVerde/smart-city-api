@@ -14,13 +14,13 @@ public class WebServer {
     private final Configuration.ServerProperties _serverProperties;
     private final Environment _environment;
 
-    private final HttpServer _apiServer = new HttpServer();
+    private final HttpServer _httpServer = new HttpServer();
 
     private void _assignEndpoint(final String path, final Servlet apiServlet) {
         final Endpoint endpoint = new Endpoint(apiServlet);
         endpoint.setStrictPathEnabled(true);
         endpoint.setPath(path);
-        _apiServer.addEndpoint(endpoint);
+        _httpServer.addEndpoint(endpoint);
     }
 
     public WebServer(final Configuration.ServerProperties serverProperties, final Environment environment) {
@@ -29,12 +29,12 @@ public class WebServer {
     }
 
     public void start() {
-        _apiServer.setPort(_serverProperties.getPort());
+        _httpServer.setPort(_serverProperties.getPort());
 
-        _apiServer.setTlsPort(_serverProperties.getTlsPort());
-        _apiServer.setCertificate(_serverProperties.getTlsCertificateFile(), _serverProperties.getTlsKeyFile());
-        _apiServer.enableEncryption(true);
-        _apiServer.redirectToTls(false);
+        _httpServer.setTlsPort(_serverProperties.getTlsPort());
+        _httpServer.setCertificate(_serverProperties.getTlsCertificateFile(), _serverProperties.getTlsKeyFile());
+        _httpServer.enableEncryption(true);
+        _httpServer.redirectToTls(false);
 
         _assignEndpoint("/api/v1/parking-meters", new ParkingMeterApi(_environment));
         _assignEndpoint("/api/v1/parking-tickets", new ParkingTicketApi(_environment));
@@ -49,13 +49,13 @@ public class WebServer {
             final Endpoint endpoint = new Endpoint(indexEndpoint);
             endpoint.setStrictPathEnabled(false);
             endpoint.setPath("/");
-            _apiServer.addEndpoint(endpoint);
+            _httpServer.addEndpoint(endpoint);
         }
 
-        _apiServer.start();
+        _httpServer.start();
     }
 
     public void stop() {
-        _apiServer.stop();
+        _httpServer.stop();
     }
 }
