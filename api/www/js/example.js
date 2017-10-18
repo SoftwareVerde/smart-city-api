@@ -1,6 +1,5 @@
 
 const TICKET_COLOR_MAX = 30.0;
-const TICKET_MAP_SEGMENTS = 15;
 
 var searchMap;
 var searchRadiusCircle;
@@ -215,19 +214,25 @@ function drawSquares(ticketSquares) {
     }
 }
 
+function getTicketMapSegments() {
+    return parseInt(document.getElementById('ticket-map-segments').value);
+}
+
 function findParkingTickets(formData, callbackFunction) {
     $.post('/api/v1/parking-tickets?search=1', formData, function (data) {
         const radius = getRadius();
         const centerLatitude = getLatitude();
         const centerLongitude = getLongitude();
 
+        const ticketMapSegments = getTicketMapSegments();
+
         const startLatitude = addMetersToLatitude(centerLatitude, centerLongitude, radius);
         const endLatitude = addMetersToLatitude(centerLatitude, centerLongitude, -radius);
-        const latitudeDifferential = (endLatitude - startLatitude) / TICKET_MAP_SEGMENTS;
+        const latitudeDifferential = (endLatitude - startLatitude) / ticketMapSegments;
 
         const startLongitude = addMetersToLongitude(centerLatitude, centerLongitude, -radius);
         const endLongitude = addMetersToLongitude(centerLatitude, centerLongitude, radius);
-        const longitudeDifferential = (endLongitude - startLongitude) / TICKET_MAP_SEGMENTS;
+        const longitudeDifferential = (endLongitude - startLongitude) / ticketMapSegments;
 
         const ticketSquares = [];
         for (let i in data.parkingTickets) {
@@ -236,7 +241,7 @@ function findParkingTickets(formData, callbackFunction) {
             const latitudeIndex = Math.floor((parkingTicket.latitude - startLatitude) / latitudeDifferential);
             const longitudeIndex = Math.floor((parkingTicket.longitude - startLongitude) / longitudeDifferential);
 
-            const index = latitudeIndex + TICKET_MAP_SEGMENTS * longitudeIndex;
+            const index = latitudeIndex + ticketMapSegments * longitudeIndex;
 
             const latitude = startLatitude + latitudeIndex * latitudeDifferential;
             const longitude = startLongitude + longitudeIndex * longitudeDifferential;
