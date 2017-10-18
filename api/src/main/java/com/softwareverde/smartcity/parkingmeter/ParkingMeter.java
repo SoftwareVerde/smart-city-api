@@ -6,7 +6,7 @@ public class ParkingMeter {
     protected String _location;
     protected Long _maxDwellDuration;
     protected Boolean _isHandicap;
-    protected Long _rateTimes100;
+    protected Double _rate;
     protected Boolean _isChargingStation;
     protected Double _latitude;
     protected Double _longitude;
@@ -28,8 +28,8 @@ public class ParkingMeter {
     public void setIsHandicap(final Boolean isHandicap) { _isHandicap = isHandicap; }
     public Boolean isHandicap() { return _isHandicap; }
 
-    public void setRateTimes100(final Long rateTimes100) { _rateTimes100 = rateTimes100; }
-    public Long getRateTimes100() { return _rateTimes100; }
+    public void setRate(final Double rate) { _rate = rate; }
+    public Double getRate() { return _rate; }
 
     public void setIsChargingStation(final Boolean isChargingStation) { _isChargingStation = isChargingStation; }
     public Boolean isChargingStation() { return _isChargingStation; }
