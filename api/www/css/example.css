@@ -5,6 +5,11 @@ html, body {
     margin: 0px;
 }
 
+
+h1, h2, h3, h4, h5, h6 {
+    font-size: 150%;
+}
+
 fieldset {
     border: #FFF solid 1px;
 }
@@ -21,21 +26,37 @@ legend {
     height: 400px;
     width: calc(100% - 20px);
     margin: 0px 10px;
-}
-
-#instructions {
-    text-align: center;
-    padding: 5px;
-    border-bottom: #000 solid 1px;
-    background-color: #454545;
-    box-shadow: 0px 5px 5px #202020;
     margin-bottom: 25px;
 }
 
+.column-container {
+    width: 32vw;
+    display: inline-block;
+    box-sizing: border-box;
+    vertical-align: top;
+    text-align: center;
+}
+
+.column-container > * {
+    display: inline-block;
+}
+
+
+#legend {
+    border: #000 solid thin;
+    background-color: #555;
+}
+
 #search-form {
-    width: 400px;
-    margin: auto;
-    margin-bottom: 50px;
+    text-align: left;
+}
+
+#instructions {
+    text-align: left;
+    border-bottom: #000 solid 1px;
+    background-color: #454545;
+    box-shadow: 0px 5px 5px #202020;
+    padding: 1em;
 }
 
 #search-form label {
@@ -72,14 +93,6 @@ legend {
 
 #clear-map-button {
     background-color: #EEEEEE;
-}
-
-#legend {
-    float: left;
-    margin: 10px;
-
-    border: #000 solid thin;
-    background-color: #555;
 }
 
 #ticket-gradient {
