@@ -1,10 +1,9 @@
 
-const TICKET_COLOR_MAX = 30.0;
-
 var searchMap;
 var searchRadiusCircle;
 var markers = [];
 var squares = [];
+var infoWindows = [];
 
 function initMap() {
     const searchRadius = getRadius();
@@ -98,8 +97,13 @@ function clearMap() {
         // remove from map
         square.setMap(null);
     }
+    for (let i in infoWindows) {
+        const infoWindow = infoWindows[i];
+        infoWindow.close();
+    }
     markers = [];
     squares = [];
+    infoWindows = [];
 }
 
 function addMarker(marker) {
@@ -110,6 +114,10 @@ function addMarker(marker) {
 function addSquare(square) {
     square.setMap(searchMap);
     squares.push(square);
+}
+
+function addInfoWindow(infoWindow) {
+    infoWindows.push(infoWindow);
 }
 
 function getParkingMeterIcon(parkingMeter) {
@@ -154,6 +162,7 @@ function findParkingMeters(formData, callbackFunction) {
             });
 
             addMarker(meterMarker);
+            addInfoWindow(infoWindow);
         }
         if (typeof callbackFunction == "function") {
             callbackFunction();
@@ -161,9 +170,14 @@ function findParkingMeters(formData, callbackFunction) {
     });
 }
 
+function getTicketColorMax() {
+    return parseInt(document.getElementById('ticket-color-max').value);
+}
+
 function determineSquareColor(ticketSquare) {
     const ticketCount = ticketSquare.tickets.length;
-    return getColorForPercentage(Math.min(ticketCount, TICKET_COLOR_MAX) / TICKET_COLOR_MAX);
+    const ticketColorMax = getTicketColorMax();
+    return getColorForPercentage(Math.min(ticketCount, ticketColorMax) / ticketColorMax);
 }
 
 function drawSquares(ticketSquares) {
@@ -210,6 +224,7 @@ function drawSquares(ticketSquares) {
             });
 
             addSquare(mapSquare);
+            addInfoWindow(infoWindow);
         }
     }
 }
@@ -280,6 +295,15 @@ $(function () {
     $('#longitude').change(function() {
         renderSearchCircle();
     });
+    $('#ticket-color-max').change(function() {
+        // update legend
+        const ticketColorMax = getTicketColorMax;
+        $('#legend-ticket-color-max').html(ticketColorMax);
+    });
+    $('#clear-map-button').click(function(event) {
+        event.preventDefault();
+        clearMap();
+    });
 
     $('#search-form').submit(function (event) {
         // prevent standard form submission
@@ -294,8 +318,6 @@ $(function () {
         const includeTickets = $('#include-tickets').is(':checked');
 
         // clear current results
-        $('#parking-meters').html('');
-        $('#parking-tickets').html('');
         clearMap();
 
         // perform search

@@ -25,7 +25,7 @@
                         <div style="text-align: center;">Parking Ticket Density</div>
                         <div id="ticket-gradient"></div>
                         <span style="float: left">1</span>
-                        <span style="float: right">30</span>
+                        <span id="legend-ticket-color-max" style="float: right">50</span>
                     </td>
                 </tr>
                 <tr>
@@ -44,10 +44,6 @@
         </div>
 
         <form id="search-form">
-            <label for="ticket-map-segments">Ticket Map Segments:</label>
-            <input id="ticket-map-segments" type="text" pattern="[1-9][0-9]*" value="15"/>
-            <br/>
-
             <label for="radius">Radius (in meters):</label>
             <input id="radius" name="radius" type="text" required pattern="[-+]?[0-9]+(\.[0-9]*)?" value="500"/>
             <br/>
@@ -68,7 +64,16 @@
             <input id="include-tickets" name="include-tickets" type="checkbox" checked/>
             <br/>
 
+            <label for="ticket-map-segments">Ticket Map Segments:</label>
+            <input id="ticket-map-segments" type="text" required pattern="[1-9][0-9]*" value="15"/>
+            <br/>
+
+            <label for="ticket-color-max">Ticket Coloring Maximum:</label>
+            <input id="ticket-color-max" type="text" required pattern="[1-9][0-9]*" value="50"/>
+            <br/>
+
             <button id="search-button">Search</button>
+            <button id="clear-map-button">Clear Map</button>
         </form>
     </body>
 </html>

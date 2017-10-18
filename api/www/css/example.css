@@ -35,6 +35,7 @@ legend {
 #search-form {
     width: 400px;
     margin: auto;
+    margin-bottom: 50px;
 }
 
 #search-form label {
@@ -48,15 +49,21 @@ legend {
 }
 
 #search-form button {
-    margin-left: 200px;
     margin-top: 10px;
-    margin-bottom: 50px;
 
     width: 75px;
     padding: 5px;
-    background-color: #70BF54;
     border-color: #333;
     color: #333;
+}
+
+#search-button {
+    margin-left: 200px;
+    background-color: #70BF54;
+}
+
+#clear-map-button {
+    background-color: #EEEEEE;
 }
 
 #legend {
