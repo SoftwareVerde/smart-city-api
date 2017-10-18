@@ -40,3 +40,12 @@ h1, h2, h3, h4, h5, h6 {
 .api-method h4 {
     border-bottom: #000 solid 1px;
 }
+
+.api-method table {
+    width: 100%;
+}
+
+.api-method table tr td:first-child {
+    font-family: "Roboto Mono", monospace;
+    width: 25%;
+}
