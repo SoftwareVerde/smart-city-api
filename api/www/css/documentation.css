@@ -1,0 +1,30 @@
+h1, h2, h3, h4, h5, h6 {
+    text-align: initial;
+    color: #333;
+}
+
+#documentation {
+    background-color: #FFF;
+    color: #333;
+    margin: 10px 10%;
+    padding: 15px;
+}
+
+.api-link {
+    display: block;
+
+    background-color: #333;
+    color: #FFF;
+
+    border-radius: 15px;
+
+    width: 500px;
+    padding: 10px;
+    margin: 10px;
+
+    border: #000 solid 2px;
+    box-shadow: 2px 5px 2px rgba(0, 0, 0, 0.4);
+
+    text-decoration: none;
+    cursor: pointer;
+}
