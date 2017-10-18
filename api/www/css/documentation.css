@@ -28,3 +28,15 @@ h1, h2, h3, h4, h5, h6 {
     text-decoration: none;
     cursor: pointer;
 }
+
+.api-method {
+    border: #000 solid 1px;
+    padding: 0 10px 5px 10px;
+    background-color: #EEE;
+
+    margin-bottom: 1em;
+}
+
+.api-method h4 {
+    border-bottom: #000 solid 1px;
+}

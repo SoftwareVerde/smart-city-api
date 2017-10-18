@@ -11,6 +11,7 @@
         <img src="/img/logo-landscape-light.png" style="margin: auto; width: 25%; display: block;" />
 
         <div id="documentation">
+            <a href="/documentation/">&larr; Documentation</a>
 
             <div class="api">
                 <h3>Parking Meters</h3>
@@ -18,6 +19,66 @@
                 <div class="api-method">
                     <h4>get</h4>
                     <p>Get a single parking meter.</p>
+
+                    <h5>Accessing the API</h5>
+                    <table>
+                        <tr>
+                            <td>URL</td>
+                            <td>/api/v1/parking-meters?get=1</td>
+                        </tr>
+                    </table>
+
+                    <h5>Inputs (Query String)</h5>
+                    <table>
+                        <tr>
+                            <td>id</td>
+                            <td>The ID (primary key) used for this API. Mutually exclusive from meter_id.</td>
+                        </tr>
+                        <tr>
+                            <td>meter_id</td>
+                            <td>The Columbus-Assigned ID.  Mutually exclusive from id.</td>
+                        </tr>
+                    </table>
+
+                    <h5>Outputs (Json)</h5>
+                    <table>
+                        <tr>
+                            <td>id</td>
+                            <td>The ID (primary key) used for this API. Mutually exclusive from meter_id.</td>
+                        </tr>
+                        <tr>
+                            <td>meterId</td>
+                            <td>The Columbus-Assigned ID.  Mutually exclusive from id.</td>
+                        </tr>
+                        <tr>
+                            <td>location</td>
+                            <td>The nearest address to the meter.  May not have the street number.</td>
+                        </tr>
+                        <tr>
+                            <td>maxDwellDuration</td>
+                            <td>The maximum number of minutes the meter can be loaded for.</td>
+                        </tr>
+                        <tr>
+                            <td>isHandicap</td>
+                            <td>'true' if the meter corresponds to a handicap parking space.  'false' otherwise.</td>
+                        </tr>
+                        <tr>
+                            <td>rate</td>
+                            <td>The rate in dollars and cents (e.g. 2.75) that would be charged for a full meter (see maxDwellDuration).</td>
+                        </tr>
+                        <tr>
+                            <td>isChargingStation</td>
+                            <td>'true' if the meter is also a car charging station.  'false' otherwise.</td>
+                        </tr>
+                        <tr>
+                            <td>latitude</td>
+                            <td>The latitude of the meter (may correspond to the nearest address, not the meter itself).</td>
+                        </tr>
+                        <tr>
+                            <td>longitude</td>
+                            <td>The latitude of the meter (may correspond to the nearest address, not the meter itself).</td>
+                        </tr>
+                    </table>
                 </div>
 
                 <div class="api-method">
