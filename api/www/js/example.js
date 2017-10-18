@@ -134,11 +134,26 @@ function findParkingMeters(formData, callbackFunction) {
             // add marker
             const icon = getParkingMeterIcon(parkingMeter);
 
+            const infoWindow = new google.maps.InfoWindow({
+                content: "<div class=\"info-text\">"
+                        + "Meter " + parkingMeter.meterId + "<br/>"
+                        + (parkingMeter.isHandicap ? "(Handicap)<br/>" : "")
+                        + (parkingMeter.isChargingStation ? "(Charging Station)<br/>" : "")
+                        + "Max Time: " + parkingMeter.maxDwellDuration + " min<br/>"
+                        + "Cost (Full): $" + (parkingMeter.rateTimes100 / 100.0).toFixed(2)
+                        + "</div>"
+            });
+
             const meterMarker = new google.maps.Marker({
                 position: new google.maps.LatLng(parkingMeter.latitude, parkingMeter.longitude),
                 icon: icon,
-                clickable: false
+                clickable: true
             });
+
+            meterMarker.addListener('click', function() {
+                infoWindow.open(searchMap, meterMarker);
+            });
+
             addMarker(meterMarker);
         }
         if (typeof callbackFunction == "function") {
@@ -156,8 +171,20 @@ function drawSquares(ticketSquares) {
     for (let i in ticketSquares) {
         const ticketSquare = ticketSquares[i];
 
-        if (ticketSquare.tickets.length > 0) {
+        const ticketCount = ticketSquare.tickets.length;
+        if (ticketCount > 0) {
             const color = determineSquareColor(ticketSquare);
+
+            const totalFined = ticketSquare.tickets.reduce(function (acc, value) {
+                return acc + parseFloat(value.fineAmount);
+            }, 0.0);
+
+            const infoText = ticketCount + " tickets, totaling $" + totalFined.toFixed(2);
+            const infoWindow = new google.maps.InfoWindow({
+                content: "<div class=\"info-text\">"
+                        + infoText
+                        + "</div>"
+            });
 
             const mapSquare = new google.maps.Rectangle({
                 strokeColor: color,
@@ -165,13 +192,25 @@ function drawSquares(ticketSquares) {
                 strokeWeight: 0,
                 fillColor: color,
                 fillOpacity: 0.35,
-                clickable: false,
+                clickable: true,
                 bounds: {
                     north: ticketSquare.north,
                     south: ticketSquare.south,
                     west: ticketSquare.west,
                     east: ticketSquare.east
                 }
+            });
+
+            infoWindow.setPosition({
+                lat: ticketSquare.north,
+                lng: (ticketSquare.east + ticketSquare.west) / 2
+            });
+
+            mapSquare.addListener('mouseover', function() {
+                infoWindow.open(searchMap);
+            });
+            mapSquare.addListener('mouseout', function() {
+                infoWindow.close();
             });
 
             addSquare(mapSquare);
@@ -185,8 +224,8 @@ function findParkingTickets(formData, callbackFunction) {
         const centerLatitude = getLatitude();
         const centerLongitude = getLongitude();
 
-        const startLatitude = addMetersToLatitude(centerLatitude, centerLongitude, -radius);
-        const endLatitude = addMetersToLatitude(centerLatitude, centerLongitude, radius);
+        const startLatitude = addMetersToLatitude(centerLatitude, centerLongitude, radius);
+        const endLatitude = addMetersToLatitude(centerLatitude, centerLongitude, -radius);
         const latitudeDifferential = (endLatitude - startLatitude) / TICKET_MAP_SEGMENTS;
 
         const startLongitude = addMetersToLongitude(centerLatitude, centerLongitude, -radius);

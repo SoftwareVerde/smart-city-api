@@ -82,3 +82,7 @@ legend {
 #legend table td {
     padding: 5px;
 }
+
+.info-text {
+    color: #333;
+}
