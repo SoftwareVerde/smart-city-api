@@ -147,7 +147,7 @@ function findParkingMeters(formData, callbackFunction) {
                         + (parkingMeter.isHandicap ? "(Handicap)<br/>" : "")
                         + (parkingMeter.isChargingStation ? "(Charging Station)<br/>" : "")
                         + "Max Time: " + parkingMeter.maxDwellDuration + " min<br/>"
-                        + "Cost (Full): $" + (parkingMeter.rateTimes100 / 100.0).toFixed(2)
+                        + "Cost (Full): $" + parkingMeter.rate.toLocaleString('en-US', { minimumFractionDigits: 2 })
                         + "</div>"
             });
 
