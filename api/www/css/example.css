@@ -5,6 +5,11 @@ html, body {
     margin: 0px;
 }
 
+
+h1, h2, h3, h4, h5, h6 {
+    font-size: 150%;
+}
+
 fieldset {
     border: #FFF solid 1px;
 }
@@ -21,23 +26,37 @@ legend {
     height: 400px;
     width: calc(100% - 20px);
     margin: 0px 10px;
+    margin-bottom: 25px;
 }
 
-#instructions {
-    display: table;
+.column-container {
+    width: 32vw;
+    display: inline-block;
+    box-sizing: border-box;
+    vertical-align: top;
     text-align: center;
+}
 
-    margin: 10px auto;
-    padding: 5px;
+.column-container > * {
+    display: inline-block;
+}
 
+
+#legend {
     border: #000 solid thin;
     background-color: #555;
 }
 
 #search-form {
-    width: 400px;
-    margin: auto;
-    margin-bottom: 50px;
+    text-align: left;
+}
+
+#instructions {
+    text-align: left;
+    border-bottom: #000 solid 1px;
+    background-color: #454545;
+    box-shadow: 5px 5px 5px #202020;
+    padding: 1em;
 }
 
 #search-form label {
@@ -48,32 +67,32 @@ legend {
 
 #search-form input[type="text"] {
     width: 150px;
+    padding: 0.5rem;
+    border: solid 1px #AAAAAA;
+    border-radius: 5px;
+    box-shadow: 4px 4px 5px rgba(0, 0, 0, 0.6);
+    color: #333333;
+    font-size: 85%;
 }
 
 #search-form button {
-    margin-top: 10px;
-
     width: 75px;
     padding: 5px;
-    border-color: #333;
-    color: #333;
+    color: #333333;
+    padding: 0.5rem;
+    margin-top: 2rem;
+    margin-right: 0.5rem;
+    border-radius: 5px;
+    border: solid 1px #333333;
+    box-shadow: 4px 4px 5px rgba(0, 0, 0, 0.6);
 }
 
 #search-button {
-    margin-left: 200px;
     background-color: #70BF54;
 }
 
 #clear-map-button {
     background-color: #EEEEEE;
-}
-
-#legend {
-    float: left;
-    margin: 10px;
-
-    border: #000 solid thin;
-    background-color: #555;
 }
 
 #ticket-gradient {
