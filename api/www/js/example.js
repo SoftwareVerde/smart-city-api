@@ -130,7 +130,7 @@ function getParkingMeterIcon(parkingMeter) {
 
     return {
         url: url,
-        scaledSize: new google.maps.Size(5, 5)
+        scaledSize: new google.maps.Size(8, 8)
     };
 }
 
