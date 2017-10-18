@@ -206,11 +206,8 @@ function drawSquares(ticketSquares) {
                 lng: (ticketSquare.east + ticketSquare.west) / 2
             });
 
-            mapSquare.addListener('mouseover', function() {
+            mapSquare.addListener('click', function() {
                 infoWindow.open(searchMap);
-            });
-            mapSquare.addListener('mouseout', function() {
-                infoWindow.close();
             });
 
             addSquare(mapSquare);
