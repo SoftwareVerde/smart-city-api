@@ -15,10 +15,12 @@ Software Verde-hosted version at:
     1. Create the database schema: smart_city_api.
     2. Source sql/init.sql
     3. Source sql/smart-city-api.sql
-    4. cd api
-    5. In api/www/example/index.html replace "YOUR_API_KEY" in the googleapis
+    4. Create a mysql user and grant SELECT privileges on smart_city_api.*
+    5. cd api
+    6. Configure your database information in conf/server.conf
+    7. In api/www/example/index.html replace "YOUR_API_KEY" in the googleapis
         script src to an API key you own.
-    6. ./scripts/make.sh
-    7. ./scripts/run-jar.sh
-    8. Navigate to localhost:8080
+    8. ./scripts/make.sh
+    9. ./scripts/run-jar.sh
+    10. Navigate to localhost:8080
 
