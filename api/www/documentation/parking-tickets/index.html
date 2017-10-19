@@ -4,6 +4,7 @@
         <link rel="stylesheet" href="/css/main.css" />
         <link rel="stylesheet" href="/css/documentation.css" />
         <script src="/js/jquery.min.js"></script>
+        <script src="/js/documentation-sample.js"></script>
 
         <link href="https://fonts.googleapis.com/css?family=Bree+Serif|Roboto+Condensed|Roboto+Mono" rel="stylesheet">
     </head>
@@ -213,6 +214,18 @@
                 </div>
             </div>
 
+            <div class="try-it-out">
+                <h3>Try It Out</h3>
+                <p>This section allows you to send a request to the search API using your own query string.<p>
+                <p>For example, look at what you get with the below request then try adding "&amp;paid_amount_greater_than=30".</p>
+
+                <div class="sample-request">
+                    <input id="sample-request-url" type="hidden" value="/api/v1/parking-tickets?search=1"/>
+                    <input id="sample-request-data" type="text" value="radius=48&latitude=39.9990&longitude=-83.0076"/><br/>
+                    <button id="sample-request-button">Submit</button>
+                </div>
+                <textarea id="sample-response"></textarea>
+            </div>
         </div>
 
         <script src="/js/main.js"></script>
