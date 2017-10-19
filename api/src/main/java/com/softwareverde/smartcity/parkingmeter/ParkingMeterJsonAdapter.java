@@ -12,7 +12,7 @@ public class ParkingMeterJsonAdapter {
         json.put("location", parkingMeter.getLocation());
         json.put("maxDwellDuration", parkingMeter.getMaxDwellDuration());
         json.put("isHandicap", parkingMeter.isHandicap());
-        json.put("rateTimes100", parkingMeter.getRateTimes100());
+        json.put("rate", parkingMeter.getRate());
         json.put("isChargingStation", parkingMeter.isChargingStation());
         json.put("latitude", parkingMeter.getLatitude());
         json.put("longitude", parkingMeter.getLongitude());

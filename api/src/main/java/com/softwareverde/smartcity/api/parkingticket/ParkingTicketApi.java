@@ -164,7 +164,7 @@ public class ParkingTicketApi implements Servlet {
         final Double dueAmountLessThan = (postParameters.containsKey("due_amount_less_than") ? Util.parseDouble(postParameters.get("due_amount_less_than")) : null);
         final String disposition = (postParameters.containsKey("disposition") ? postParameters.get("disposition") : null);
 
-        List<ParkingTicket> matchingParkingTickets = parkingTicketDatabaseAdapter.inflateBySearchCriteria(street, dateAfter, dateBefore, licensePlateNumber, licensePlateState, violationCode, fineAmountGreaterThan, fineAmountLessThan, paidAmountGreaterThan, paidAmountLessThan, dueAmountGreaterThan, dueAmountLessThan, disposition);
+        List<ParkingTicket> matchingParkingTickets = parkingTicketDatabaseAdapter.inflateBySearchCriteria(radius, radiusLatitude, radiusLongitude, street, dateAfter, dateBefore, licensePlateNumber, licensePlateState, violationCode, fineAmountGreaterThan, fineAmountLessThan, paidAmountGreaterThan, paidAmountLessThan, dueAmountGreaterThan, dueAmountLessThan, disposition);
         Collection<ParkingTicket> locationFilteredParkingTickets = GeoUtil.filterByLocation(matchingParkingTickets, new ParkingTicketLocationExtractor(), radius, radiusLatitude, radiusLongitude);
 
         final ListParkingTicketResult jsonResult = new ListParkingTicketResult();

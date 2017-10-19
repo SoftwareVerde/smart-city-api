@@ -1,0 +1,76 @@
+h1, h2, h3, h4, h5, h6 {
+    text-align: initial;
+    color: #333;
+}
+
+#documentation {
+    background-color: #FFF;
+    color: #333;
+    margin: 10px 10% 30px 10%;
+    padding: 15px;
+}
+
+.api-link {
+    display: block;
+
+    background-color: #333;
+    color: #FFF;
+
+    border-radius: 15px;
+
+    width: 500px;
+    padding: 10px;
+    margin: 10px;
+
+    border: #000 solid 2px;
+    box-shadow: 2px 5px 2px rgba(0, 0, 0, 0.4);
+
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.api-method {
+    border: #000 solid 1px;
+    padding: 0 10px 5px 10px;
+    background-color: #EEE;
+
+    margin-bottom: 1em;
+}
+
+.api-method h4 {
+    border-bottom: #000 solid 1px;
+}
+
+.api-method table {
+    width: 100%;
+}
+
+.api-method table tr td:first-child {
+    font-family: "Roboto Mono", monospace;
+    width: 25%;
+}
+
+.try-it-out {
+    border: #DDD inset 2px;
+    background-color: #EEE;
+
+    padding: 10px;
+    margin: 2em 1em 0.5em 1em;
+}
+
+#sample-request-data {
+    width: 75%;
+    padding: 4px;
+    margin: 5px;
+}
+
+#sample-request-button {
+    padding: 5px;
+    margin: 5px;
+}
+
+#sample-response {
+    width: 100%;
+    height: 10em;
+    margin-top: 10px;
+}

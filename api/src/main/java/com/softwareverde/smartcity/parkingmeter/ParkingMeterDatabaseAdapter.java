@@ -4,6 +4,7 @@ import com.softwareverde.database.DatabaseConnection;
 import com.softwareverde.database.DatabaseException;
 import com.softwareverde.database.Query;
 import com.softwareverde.database.Row;
+import com.softwareverde.geo.util.GeoUtil;
 import com.softwareverde.smartcity.util.SmartCityUtil;
 
 import java.sql.Connection;
@@ -55,13 +56,28 @@ public class ParkingMeterDatabaseAdapter {
         }
     }
 
-    public List<ParkingMeter> inflateBySearchCriteria(final String street, final Integer maxDwellDurationGreaterThan, final Integer maxDwellDurationLessThan, final Float rateGreaterThan, final Float rateLessThan, final Boolean isHandicap, final Boolean isChargingStation) throws DatabaseException {
+    public List<ParkingMeter> inflateBySearchCriteria(final Double radius, final Double latitude, final Double longitude, final String street, final Integer maxDwellDurationGreaterThan, final Integer maxDwellDurationLessThan, final Float rateGreaterThan, final Float rateLessThan, final Boolean isHandicap, final Boolean isChargingStation) throws DatabaseException {
         final Integer isHandicapInt = _convertBooleanToInteger(isHandicap);
         final Integer isChargingStationInt = _convertBooleanToInteger(isChargingStation);
+
+        Double latitudeMax = null;
+        Double latitudeMin = null;
+        Double longitudeMax = null;
+        Double longitudeMin = null;
+        if (radius != null) {
+            latitudeMax = latitude == null ? null : GeoUtil.addMetersToLatitude(latitude, longitude, radius);
+            latitudeMin = latitude == null ? null : GeoUtil.addMetersToLatitude(latitude, longitude, -radius);
+            longitudeMax = longitude == null ? null : GeoUtil.addMetersToLongitude(latitude, longitude, radius);
+            longitudeMin = longitude == null ? null : GeoUtil.addMetersToLongitude(latitude, longitude, -radius);
+        }
 
         final List<Row> rows = _databaseConnection.query(
                 "SELECT * FROM parking_meters WHERE"
                         +" (LENGTH(?) = 0 OR location LIKE ?)"
+                        +" AND (LENGTH(?) = 0 OR latitude <= ?)"
+                        +" AND (LENGTH(?) = 0 OR latitude >= ?)"
+                        +" AND (LENGTH(?) = 0 OR longitude <= ?)"
+                        +" AND (LENGTH(?) = 0 OR longitude >= ?)"
                         +" AND (LENGTH(?) = 0 OR max_dwell_duration >= ?)"
                         +" AND (LENGTH(?) = 0 OR max_dwell_duration <= ?)"
                         +" AND (LENGTH(?) = 0 OR rate >= ?)"
@@ -70,6 +86,10 @@ public class ParkingMeterDatabaseAdapter {
                         +" AND (LENGTH(?) = 0 OR is_charging_station = ?)",
                 new String[] {
                         SmartCityUtil.toEmptyStringIfNull(street),                      SmartCityUtil.toEmptyStringIfNull(street),
+                        SmartCityUtil.toEmptyStringIfNull(latitudeMax),                 SmartCityUtil.toEmptyStringIfNull(latitudeMax),
+                        SmartCityUtil.toEmptyStringIfNull(latitudeMin),                 SmartCityUtil.toEmptyStringIfNull(latitudeMin),
+                        SmartCityUtil.toEmptyStringIfNull(longitudeMax),                SmartCityUtil.toEmptyStringIfNull(longitudeMax),
+                        SmartCityUtil.toEmptyStringIfNull(longitudeMin),                SmartCityUtil.toEmptyStringIfNull(longitudeMin),
                         SmartCityUtil.toEmptyStringIfNull(maxDwellDurationGreaterThan), SmartCityUtil.toEmptyStringIfNull(maxDwellDurationGreaterThan),
                         SmartCityUtil.toEmptyStringIfNull(maxDwellDurationLessThan),    SmartCityUtil.toEmptyStringIfNull(maxDwellDurationLessThan),
                         SmartCityUtil.toEmptyStringIfNull(rateGreaterThan),             SmartCityUtil.toEmptyStringIfNull(rateGreaterThan),
@@ -102,7 +122,7 @@ public class ParkingMeterDatabaseAdapter {
         parkingMeter.setLocation(row.getString("location"));
         parkingMeter.setMaxDwellDuration(row.getLong("max_dwell_duration"));
         parkingMeter.setIsHandicap(row.getBoolean("is_handicap"));
-        parkingMeter.setRateTimes100(row.getLong("rate") * 100L);
+        parkingMeter.setRate(row.getDouble("rate"));
         parkingMeter.setIsChargingStation(row.getBoolean("is_charging_station"));
         parkingMeter.setLatitude(row.getDouble("latitude"));
         parkingMeter.setLongitude(row.getDouble("longitude"));

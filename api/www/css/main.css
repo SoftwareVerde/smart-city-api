@@ -1,18 +1,20 @@
 body {
+    color: #FFF;
     background-color: #333333;
-    color: #70BF54;
     font-family: sans-serif;
 }
 
-body * {
+body {
     font-family: 'Roboto Condensed', sans-serif;
 }
 
 h1 {
+    font-size: 600%;
+}
+h1, h2, h3, h4, h5, h6 {
     font-weight: bold;
     text-align: center;
-    font-size: 600%;
-
+    color: #70BF54;
     font-family: 'Bree Serif', serif;
 }
 
@@ -45,4 +47,13 @@ h1 {
 .label {
     color: #FFFFFF;
     font-style: italic;
+}
+
+#introduction {
+    text-align: center;
+    margin-bottom: 4em;
+}
+
+#introduction a:link, #introduction a:visited {
+    color: #46F;
 }

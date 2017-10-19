@@ -1,0 +1,116 @@
+html, body {
+    min-height: 100%;
+    width: 100%;
+    min-width: 1000px;
+    margin: 0px;
+}
+
+
+h1, h2, h3, h4, h5, h6 {
+    font-size: 150%;
+}
+
+fieldset {
+    border: #FFF solid 1px;
+}
+
+legend {
+    background-color: #70BF54;
+    color: #333;
+    padding: 4px;
+    border: #FFF solid 1px;
+}
+
+#search-map {
+    background-color: grey;
+    height: 400px;
+    width: calc(100% - 20px);
+    margin: 0px 10px;
+    margin-bottom: 25px;
+}
+
+.column-container {
+    width: 32vw;
+    display: inline-block;
+    box-sizing: border-box;
+    vertical-align: top;
+    text-align: center;
+}
+
+.column-container > * {
+    display: inline-block;
+}
+
+
+#legend {
+    border: #000 solid thin;
+    background-color: #555;
+}
+
+#search-form {
+    text-align: left;
+}
+
+#instructions {
+    text-align: left;
+    border-bottom: #000 solid 1px;
+    background-color: #454545;
+    box-shadow: 5px 5px 5px #202020;
+    padding: 1em;
+}
+
+#search-form label {
+    display: inline-block;
+    width: 200px;
+    padding: 10px 0px;
+}
+
+#search-form input[type="text"] {
+    width: 150px;
+    padding: 0.5rem;
+    border: solid 1px #AAAAAA;
+    border-radius: 5px;
+    box-shadow: 4px 4px 5px rgba(0, 0, 0, 0.6);
+    color: #333333;
+    font-size: 85%;
+}
+
+#search-form button {
+    width: 75px;
+    padding: 5px;
+    color: #333333;
+    padding: 0.5rem;
+    margin-top: 2rem;
+    margin-right: 0.5rem;
+    border-radius: 5px;
+    border: solid 1px #333333;
+    box-shadow: 4px 4px 5px rgba(0, 0, 0, 0.6);
+}
+
+#search-button {
+    background-color: #70BF54;
+}
+
+#clear-map-button {
+    background-color: #EEEEEE;
+}
+
+#ticket-gradient {
+    height: 1em;
+    background: -webkit-linear-gradient(to right, #00FF00, #FFFF00, #FF0000);
+    background:    -moz-linear-gradient(to right, #00FF00, #FFFF00, #FF0000);
+    background:      -o-linear-gradient(to right, #00FF00, #FFFF00, #FF0000);
+    background:         linear-gradient(to right, #00FF00, #FFFF00, #FF0000);
+}
+
+#legend table img {
+    height: 10px;
+}
+
+#legend table td {
+    padding: 5px;
+}
+
+.info-text {
+    color: #333;
+}
