@@ -5,7 +5,7 @@
         <link rel="stylesheet" href="/css/documentation.css" />
         <script src="/js/jquery.min.js"></script>
 
-        <link href="https://fonts.googleapis.com/css?family=Bree+Serif|Roboto+Condensed" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css?family=Bree+Serif|Roboto+Condensed|Roboto+Mono" rel="stylesheet">
     </head>
     <body>
         <img src="/img/logo-landscape-light.png" style="margin: auto; width: 25%; display: block;" />
@@ -31,51 +31,51 @@
                     <h5>Inputs (Query String)</h5>
                     <table>
                         <tr>
-                            <td>id</td>
-                            <td>The ID (primary key) used for this API. Mutually exclusive from meter_id.</td>
+                            <td>id : number</td>
+                            <td>The ID (primary key) used for this API. Mutually exclusive from meter_id. (Optional)</td>
                         </tr>
                         <tr>
-                            <td>meter_id</td>
-                            <td>The Columbus-Assigned ID.  Mutually exclusive from id.</td>
+                            <td>meter_id : string</td>
+                            <td>The Columbus-Assigned ID.  Mutually exclusive from id. (Optional)</td>
                         </tr>
                     </table>
 
                     <h5>Outputs (Json)</h5>
                     <table>
                         <tr>
-                            <td>id</td>
+                            <td>id : number</td>
                             <td>The ID (primary key) used for this API. Mutually exclusive from meter_id.</td>
                         </tr>
                         <tr>
-                            <td>meterId</td>
+                            <td>meterId : string</td>
                             <td>The Columbus-Assigned ID.  Mutually exclusive from id.</td>
                         </tr>
                         <tr>
-                            <td>location</td>
+                            <td>location : string</td>
                             <td>The nearest address to the meter.  May not have the street number.</td>
                         </tr>
                         <tr>
-                            <td>maxDwellDuration</td>
+                            <td>maxDwellDuration : number</td>
                             <td>The maximum number of minutes the meter can be loaded for.</td>
                         </tr>
                         <tr>
-                            <td>isHandicap</td>
+                            <td>isHandicap : boolean</td>
                             <td>'true' if the meter corresponds to a handicap parking space.  'false' otherwise.</td>
                         </tr>
                         <tr>
-                            <td>rate</td>
+                            <td>rate : number</td>
                             <td>The rate in dollars and cents (e.g. 2.75) that would be charged for a full meter (see maxDwellDuration).</td>
                         </tr>
                         <tr>
-                            <td>isChargingStation</td>
+                            <td>isChargingStation : boolean</td>
                             <td>'true' if the meter is also a car charging station.  'false' otherwise.</td>
                         </tr>
                         <tr>
-                            <td>latitude</td>
+                            <td>latitude : number</td>
                             <td>The latitude of the meter (may correspond to the nearest address, not the meter itself).</td>
                         </tr>
                         <tr>
-                            <td>longitude</td>
+                            <td>longitude : number</td>
                             <td>The latitude of the meter (may correspond to the nearest address, not the meter itself).</td>
                         </tr>
                     </table>
@@ -84,11 +84,90 @@
                 <div class="api-method">
                     <h4>list</h4>
                     <p>Get all parking meters.</p>
+
+                    <h5>Accessing the API</h5>
+                    <table>
+                        <tr>
+                            <td>URL</td>
+                            <td>/api/v1/parking-meters?list=1</td>
+                        </tr>
+                    </table>
+
+                    <h5>Inputs (Query String)</h5>
+                    <p>None</p>
+
+                    <h5>Outputs (Json)</h5>
+                    <table>
+                        <tr>
+                            <td>parkingMeters : array</td>
+                            <td>An array of parking meter objects, as defined in the 'get' response above.</td>
+                        </tr>
+                    </table>
                 </div>
 
                 <div class="api-method">
                     <h4>search</h4>
                     <p>Get all parking meters matching specific criteria.</p>
+
+                    <h5>Accessing the API</h5>
+                    <table>
+                        <tr>
+                            <td>URL</td>
+                            <td>/api/v1/parking-meters?search=1</td>
+                        </tr>
+                    </table>
+
+                    <h5>Inputs (Query String)</h5>
+                    <table>
+                        <tr>
+                            <td>radius : number</td>
+                            <td>Radius (in meters) around the below latitude and longitude about which to return results (inclusive). (Optional)</td>
+                        </tr>
+                        <tr>
+                            <td>latitude : number</td>
+                            <td>The latitude to be used as the center for radius-based searching. (Optional)</td>
+                        </tr>
+                        <tr>
+                            <td>longitude : number</td>
+                            <td>The longitude to be used as the center for radius-based searching. (Optional)</td>
+                        </tr>
+                        <tr>
+                            <td>street : string</td>
+                            <td>Return parking meters with the given street name.  Can include wildcards (via '%'). (Optional)</td>
+                        </tr>
+                        <tr>
+                            <td>max_dwell_duration_greater_than : number</td>
+                            <td>Return parking meters whose max dwell duration is than greater than this amount (in minutes) (inclusive). (Optional)</td>
+                        </tr>
+                        <tr>
+                            <td>max_dwell_duration_less_than : number</td>
+                            <td>Return parking meters whose max dwell duration is than less than this amount (in minutes) (inclusive). (Optional)</td>
+                        </tr>
+                        <tr>
+                            <td>rate_greater_than : number</td>
+                            <td>Return parking meters whose full rate is greater than this amount (in dollars) (inclusive). (Optional)</td>
+                        </tr>
+                        <tr>
+                            <td>rate_less_than : number</td>
+                            <td>Return parking meters whose full rate is less than this amount (in dollars) (inclusive). (Optional)</td>
+                        </tr>
+                        <tr>
+                            <td>is_handicap : boolean</td>
+                            <td>Return parking meters designated as a handicap when set to 1 or not handicap when set to 0. (Optional)</td>
+                        </tr>
+                        <tr>
+                            <td>is_charging_station : boolean</td>
+                            <td>Return parking meters designated as a charging station when set to 1 or not charging station when set to 0. (Optional)</td>
+                        </tr>
+                    </table>
+
+                    <h5>Outputs (Json)</h5>
+                    <table>
+                        <tr>
+                            <td>parkingMeters : array</td>
+                            <td>An array of parking meter objects, as defined in the 'get' response above.</td>
+                        </tr>
+                    </table>
                 </div>
             </div>
 
