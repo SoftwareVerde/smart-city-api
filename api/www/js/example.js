@@ -281,11 +281,17 @@ function findParkingTickets(formData, callbackFunction) {
     });
 }
 
-function setSearchButtonHtml(html) {
-    $('#search-button').html(html);
+function showLoadingScreen() {
+    $('#loading-screen').show();
+}
+
+function hideLoadingScreen() {
+    $('#loading-screen').hide();
 }
 
 $(function () {
+    hideLoadingScreen();
+
     $('#radius').change(function() {
         renderSearchCircle();
     });
@@ -312,7 +318,7 @@ $(function () {
         // temporarily stop displaying the circle
         searchRadiusCircle.setMap(null);
 
-        setSearchButtonHtml("<i class=\"fa fa-spin fa-refresh\"></i>");
+        showLoadingScreen();
 
         const includeMeters = $('#include-meters').is(':checked');
         const includeTickets = $('#include-tickets').is(':checked');
@@ -330,7 +336,7 @@ $(function () {
             findParkingMeters(formData, function() {
                 dataLoaded.meters = true;
                 if (dataLoaded.tickets) {
-                    setSearchButtonHtml("Search");
+                    hideLoadingScreen();
                 }
             });
         }
@@ -339,11 +345,9 @@ $(function () {
             findParkingTickets(formData, function() {
                dataLoaded.tickets = true;
                if (dataLoaded.meters) {
-                   setSearchButtonHtml("Search");
+                   hideLoadingScreen();
                }
            });
         }
-
-        $('#results-container').css('visibility', 'visible');
     });
 });

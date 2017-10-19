@@ -21,6 +21,11 @@ legend {
     border: #FFF solid 1px;
 }
 
+#home-link, #home-link:visited {
+    margin-left: 1em;
+    color: #46F;
+}
+
 #search-map {
     background-color: grey;
     height: 400px;
@@ -113,4 +118,23 @@ legend {
 
 .info-text {
     color: #333;
+}
+
+#loading-screen {
+    position: absolute;
+
+    width: 200px;
+    height: 3em;
+
+    top: 40%;
+    left: calc(50% - 100px);
+
+    text-align: center;
+
+    border: black solid 3px;
+    border-radius: 5px;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: inline-block;
+
+    z-index: 10;
 }
