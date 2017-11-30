@@ -4,6 +4,7 @@ import com.softwareverde.httpserver.DirectoryServlet;
 import com.softwareverde.httpserver.HttpServer;
 import com.softwareverde.servlet.Endpoint;
 import com.softwareverde.servlet.Servlet;
+import com.softwareverde.smartcity.api.parcel.ParcelApi;
 import com.softwareverde.smartcity.api.parkingmeter.ParkingMeterApi;
 import com.softwareverde.smartcity.api.parkingticket.ParkingTicketApi;
 import com.softwareverde.smartcity.environment.Environment;
@@ -38,6 +39,7 @@ public class WebServer {
 
         _assignEndpoint("/api/v1/parking-meters", new ParkingMeterApi(_environment));
         _assignEndpoint("/api/v1/parking-tickets", new ParkingTicketApi(_environment));
+        _assignEndpoint("/api/v1/parcels", new ParcelApi(_environment));
 
         { // Static Content
             final File servedDirectory = new File(_serverProperties.getRootDirectory() +"/");

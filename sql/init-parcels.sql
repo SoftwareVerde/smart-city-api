@@ -29,7 +29,7 @@ CREATE TABLE parcels (
     flood_info VARCHAR(255) NULL,
     property_class VARCHAR(255) NULL,
     number_of_property_cards INT UNSIGNED NULL,
-    acerage DECIMAL(14, 4) NULL,
+    acreage DECIMAL(14, 4) NULL,
     last_sale_price DECIMAL(14, 4) NULL,
     total_taxable_value DECIMAL(14, 4) NULL,
     city VARCHAR(255) NULL,
@@ -54,8 +54,15 @@ CREATE TABLE parcels (
     year_built VARCHAR(255) NULL,
     property_type VARCHAR(255) NULL,
     wall_code VARCHAR(255) NULL,
-    point_x DECIMAL(14, 4) NULL,
-    point_y DECIMAL(14, 4) NULL
+    latitude DECIMAL(14, 4) NULL,
+    longitude DECIMAL(14, 4) NULL,
+    INDEX (parcel_id),
+    INDEX (city),
+    INDEX (acreage),
+    INDEX (last_sale_price),
+    INDEX (zipcode),
+    INDEX (latitude),
+    INDEX (longitude)
 ) ENGINE=InnoDB;
 
 -- Unused columns from CSV

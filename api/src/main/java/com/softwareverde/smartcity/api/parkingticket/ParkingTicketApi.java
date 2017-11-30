@@ -80,8 +80,8 @@ public class ParkingTicketApi implements Servlet {
          * GET:     search[=1]
          * POST:    radius[>=0], latitude[*], longitude[*]  # Radius (in meters) from its Latitude/Longitude to the provided latitude and longitude (inclusive). (Optional)
          *          street[*]                               # Match on location, including wildcards (via "%"). (Optional) (e.x. "front%" will match both "Front ST N" and "Front ST S")
-         *          date_after[yyyy-MM-dd HH:mm:ss]         # Return parking tickets whose date is after than date_greater_than (inclusive). (Optional)
-         *          date_before[yyyy-MM-dd HH:mm:ss]        # Return parking tickets whose date is before than date_less_than (inclusive). (Optional)
+         *          date_after[yyyy-MM-dd HH:mm:ss]         # Return parking tickets whose date is after date_after (inclusive). (Optional)
+         *          date_before[yyyy-MM-dd HH:mm:ss]        # Return parking tickets whose date is before date_before (inclusive). (Optional)
          *          license_plate_number[*]                 # Match on license_plate_number, including wildcards (via "%"). (Optional)
          *          license_plate_state[*]                  # Return parking tickets with license plate two-letter state equal to license_plate_state. (Optional)
          *          violation_code[*]                       # Match on violation_code, including wildcards (via "%"). (Optional)
