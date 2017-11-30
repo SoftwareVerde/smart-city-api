@@ -49,7 +49,7 @@ CREATE TABLE parcels (
     building_condition VARCHAR(255) NULL,
     has_fireplaces BOOLEAN NULL,
     building_grade VARCHAR(255) NULL,
-    height DECIMAL(14, 4) NULL,
+    height VARCHAR(255) NULL,
     story_count DECIMAL(14, 4) NULL,
     year_built VARCHAR(255) NULL,
     property_type VARCHAR(255) NULL,

@@ -1,8 +1,6 @@
 from dateutil.parser import parse
 from osgeo import ogr, osr
 import csv
-import re
-import sys
 
 SOURCE_DATUM = osr.SpatialReference()
 SOURCE_DATUM.ImportFromEPSG(102723) # NAD 1983 StatePlane Ohio South FIPS 3402 Feet
@@ -24,7 +22,8 @@ def sql_sanitize(value):
     if (isinstance(value, basestring)):
         if (len(value) == 0):
             return "NULL"
-        escaped = re.sub(r"'", r"\\'", value);
+        escaped = value.replace("\\", "\\\\");
+        escaped = escaped.replace("'", "\\'");
         # add quotes
         return "'%s'" % escaped
     return value
@@ -34,26 +33,47 @@ def convert_date(value):
     date = parse(value).isoformat(" ").split(".")[0]
     return date
 
+def convert_int(value):
+    try:
+        return int(value)
+    except:
+        return ""
+
+def convert_float(value):
+    try:
+        return float(value)
+    except:
+        return ""
+
+def convert_boolean(value):
+    intValue = convert_int(value)
+    if (isinstance(intValue, int)):
+        if (intValue > 0):
+            return 1
+        else:
+            return 0
+    return intValue
+
 def create_query(row):
     parcel_id = row[0].strip()
-    exempt_land_value = row[1].strip()
-    exempt_building_value = row[2].strip()
-    exempt_total_value = row[3].strip()
-    taxable_land_value = row[4].strip()
-    taxable_building_value = row[5].strip()
-    taxable_total_value = row[6].strip()
+    exempt_land_value = convert_float(row[1].strip())
+    exempt_building_value = convert_float(row[2].strip())
+    exempt_total_value = convert_float(row[3].strip())
+    taxable_land_value = convert_float(row[4].strip())
+    taxable_building_value = convert_float(row[5].strip())
+    taxable_total_value = convert_float(row[6].strip())
     map_number = row[7].strip()
     routing_sequence = row[8].strip()
     land_use_code = row[9].strip()
     agricultural_use_value = row[10].strip()
     school_district_code = row[11].strip()
-    contains_homestead_exemption_values = row[12].strip()
+    contains_homestead_exemption_values = convert_boolean(row[12].strip())
     tax_bill_mailing_address_line1 = row[13].strip()
     tax_bill_mailing_address_line2 = row[14].strip()
     tax_bill_mailing_address_line3 = row[15].strip()
     tax_bill_mailing_address_line4 = row[16].strip()
     transfer_date = convert_date(row[17].strip())
-    transfer_year = row[18].strip()
+    transfer_year = convert_int(row[18].strip())
     owner_name1 = row[19].strip()
     owner_name2 = row[20].strip()
     owner_name3 = row[21].strip()
@@ -62,10 +82,10 @@ def create_query(row):
     neighborhood_code = row[24].strip()
     flood_info = row[25].strip()
     property_class = row[26].strip()
-    number_of_property_cards = row[27].strip()
-    acreage = row[28].strip()
-    last_sale_price = row[29].strip()
-    total_taxable_value = row[30].strip()
+    number_of_property_cards = convert_int(row[27].strip())
+    acreage = convert_float(row[28].strip())
+    last_sale_price = convert_float(row[29].strip())
+    total_taxable_value = convert_float(row[30].strip())
     city = row[38].strip()
     state = row[39].strip()
     zipcode = row[40].strip()
@@ -73,18 +93,18 @@ def create_query(row):
     description_line2 = row[42].strip()
     description_line3 = row[43].strip()
     tax_designation = row[44].strip()
-    primary_building_area_sqft = row[46].strip()
+    primary_building_area_sqft = convert_float(row[46].strip())
     dwelling_type = row[47].strip()
-    total_room_count = row[48].strip()
-    full_bath_count = row[49].strip()
-    half_bath_count = row[50].strip()
-    bedroom_count = row[51].strip()
+    total_room_count = convert_int(row[48].strip())
+    full_bath_count = convert_int(row[49].strip())
+    half_bath_count = convert_int(row[50].strip())
+    bedroom_count = convert_int(row[51].strip())
     central_air_style = row[52].strip()
     building_condition = row[55].strip()
-    has_fireplaces = row[55].strip()
+    has_fireplaces = convert_boolean(row[55].strip())
     building_grade = row[56].strip()
     height = row[57].strip()
-    story_count = row[58].strip()
+    story_count = convert_float(row[58].strip())
     year_built = row[59].strip()
     property_code = row[60].strip()
     wall_code = row[61].strip()
@@ -158,8 +178,8 @@ def create_query(row):
         sql_sanitize(year_built),
         sql_sanitize(property_code),
         sql_sanitize(wall_code),
-        sql_sanitize(lat),
-        sql_sanitize(lng)
+        lat,
+        lng
     );
 
 with open('parcels_2017-07.csv', 'rb') as csvfile:
