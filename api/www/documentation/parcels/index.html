@@ -1,0 +1,465 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <link rel="stylesheet" href="/css/main.css"/>
+    <link rel="stylesheet" href="/css/documentation.css"/>
+    <script src="/js/jquery.min.js"></script>
+    <script src="/js/documentation-sample.js"></script>
+
+    <link href="https://fonts.googleapis.com/css?family=Bree+Serif|Roboto+Condensed|Roboto+Mono" rel="stylesheet">
+</head>
+<body>
+<img src="/img/logo-landscape-light.png" style="margin: auto; width: 25%; display: block;"/>
+
+<div id="documentation">
+    <a href="/">&larr; Home</a>
+
+    <div class="api">
+        <h3>Parcels</h3>
+
+        <div class="api-method">
+            <h4>get</h4>
+            <p>Get a single parcel.</p>
+
+            <h5>Accessing the API</h5>
+            <table>
+                <tr>
+                    <td>URL</td>
+                    <td>/api/v1/parcels?get=1</td>
+                </tr>
+            </table>
+
+            <h5>Inputs (Query String)</h5>
+            <table>
+                <tr>
+                    <td>id : number</td>
+                    <td>The ID (primary key) used for this API. Mutually exclusive from parcel_id. (Optional)</td>
+                </tr>
+                <tr>
+                    <td>parcel_id : string</td>
+                    <td>The Columbus-Assigned ID. Mutually exclusive from id. (Optional)</td>
+                </tr>
+            </table>
+
+            <h5>Outputs (Json)</h5>
+            <table>
+                <tr>
+                    <td>id : number</td>
+                    <td>The ID (primary key) used for this API. Mutually exclusive from parcel.</td>
+                </tr>
+                <tr>
+                    <td>parcelId : string</td>
+                    <td>The Columbus-Assigned ID. Mutually exclusive from id.</td>
+                </tr>
+                <tr>
+                    <td>exemptPropertyAppraisalLandValue : number</td>
+                    <td>The appraisal land value for exempt properties only.</td>
+                </tr>
+                <tr>
+                    <td>exemptPropertyAppraisalBuildingValue : number</td>
+                    <td>The appraisal building value for exempt properties only.</td>
+                </tr>
+                <tr>
+                    <td>exemptPropertyAppraisalTotalValue : number</td>
+                    <td>The appraisal total value for exempt properties only.</td>
+                </tr>
+                <tr>
+                    <td>taxablePropertyAppraisalLandValue : number</td>
+                    <td>The appraisal land value for taxable properties.</td>
+                </tr>
+                <tr>
+                    <td>taxablePropertyAppraisalBuildingValue : number</td>
+                    <td>The appraisal building value for taxable properties.</td>
+                </tr>
+                <tr>
+                    <td>taxablePropertyAppraisalTotalValue : number</td>
+                    <td>The appraisal total value for taxable properties.</td>
+                </tr>
+                <tr>
+                    <td>auditorsMapNumber : string</td>
+                    <td>The auditor's map number with the first character being
+                        the auditor's map book code (AUDMPRE), the next three characters being the
+                        auditor's map book page (AUDPAGE), and the final five characters containing the
+                        auditor's map suffix codes (AUDMSUF).</td>
+                </tr>
+                <tr>
+                    <td>auditorsRoutingSequence : string</td>
+                    <td>The auditor's routing sequence with the first three
+                        numbers being the routing sequence, followed by a period, then two numbers
+                        representing multiple card sequences.</td>
+                </tr>
+                <tr>
+                    <td>appraisalLandUseCode : string</td>
+                    <td>The auditor's land use code for appraisal purposes (not
+                        to be used as zoning codes)</td>
+                </tr>
+                <tr>
+                    <td>currentAgriculturalUseValue : string</td>
+                    <td>The current agricultural use value.</td>
+                </tr>
+                <tr>
+                    <td>schoolDistrictCode : string</td>
+                    <td>The school district code.</td>
+                </tr>
+                <tr>
+                    <td>containsHomesteadExemptionValues : boolean</td>
+                    <td>True if parcel contains homestead exemption values.</td>
+                </tr>
+                <tr>
+                    <td>taxBillMailingAddressLine1 : string</td>
+                    <td>Line 1 of the tax bill mailing address.</td>
+                </tr>
+                <tr>
+                    <td>taxBillMailingAddressLine2 : string</td>
+                    <td>Line 2 of the tax bill mailing address.</td>
+                </tr>
+                <tr>
+                    <td>taxBillMailingAddressLine3 : string</td>
+                    <td>Line 3 of the tax bill mailing address.</td>
+                </tr>
+                <tr>
+                    <td>taxBillMailingAddressLine4 : string</td>
+                    <td>Line 4 of the tax bill mailing address.</td>
+                </tr>
+                <tr>
+                    <td>transferDate : date</td>
+                    <td>The date of the last ownership transfer.</td>
+                </tr>
+                <tr>
+                    <td>transferYear : number</td>
+                    <td>The year of the last ownership transfer.</td>
+                </tr>
+                <tr>
+                    <td>ownerName1 : string</td>
+                    <td>Name of the first owner of the parcel.</td>
+                </tr>
+                <tr>
+                    <td>ownerName2 : string</td>
+                    <td>Name of the second owner of the parcel, if any.</td>
+                </tr>
+                <tr>
+                    <td>ownerName3 : string</td>
+                    <td>Name of the third owner of the parcel, if any.</td>
+                </tr>
+                <tr>
+                    <td>ownerAddress1 : string</td>
+                    <td>Line 1 of the address of the owner, usually the parcel address for residential properties.</td>
+                </tr>
+                <tr>
+                    <td>ownerAddress2 : string</td>
+                    <td>Line 2 of the address of the owner, usually the parcel address for residential properties.</td>
+                </tr>
+                <tr>
+                    <td>auditorsNeighborhoodCode : string</td>
+                    <td>The auditor's in-house code identifying the neighborhood of the parcel.</td>
+                </tr>
+                <tr>
+                    <td>floodInfo : string</td>
+                    <td>Flood info.</td>
+                </tr>
+                <tr>
+                    <td>propertyClass : string</td>
+                    <td>The parcel property class.  Valid entries include:
+                        <ul>
+                            <li>C &gt;&gt; Commercial property</li>
+                            <li>E &gt;&gt; Exempt property</li>
+                            <li>F &gt;&gt; Agricultural property</li>
+                            <li>I &gt;&gt; Industrial property</li>
+                            <li>M &gt;&gt; Mineral</li>
+                            <li>R &gt;&gt; Residential property</li>
+                            <li>U &gt;&gt; Utility</li>
+                        </ul>
+                    </td>
+                </tr>
+                <tr>
+                    <td>numberOfPropertyCards : number</td>
+                    <td>The number of property cards used to record the parcel.</td>
+                </tr>
+                <tr>
+                    <td>acreage : number</td>
+                    <td>The acreage of the parcel.</td>
+                </tr>
+                <tr>
+                    <td>lastSalePrice : number</td>
+                    <td>The last known valid sale price.</td>
+                </tr>
+                <tr>
+                    <td>totalTaxableValue : number</td>
+                    <td>The total taxable value for the parcel.</td>
+                </tr>
+                <tr>
+                    <td>city : string</td>
+                    <td>The city the parcel is within.</td>
+                </tr>
+                <tr>
+                    <td>state : string</td>
+                    <td>The state the parcel is within.</td>
+                </tr>
+                <tr>
+                    <td>zipcode : string</td>
+                    <td>The zip code the parcel is within.</td>
+                </tr>
+                <tr>
+                    <td>descriptionLine1 : string</td>
+                    <td>Line 1 of the parcel description.</td>
+                </tr>
+                <tr>
+                    <td>descriptionLine2 : string</td>
+                    <td>Line 2 of the parcel description.</td>
+                </tr>
+                <tr>
+                    <td>descriptionLine3 : string</td>
+                    <td>Line 3 of the parcel description.</td>
+                </tr>
+                <tr>
+                    <td>taxDesignation : string</td>
+                    <td>The parcel's tax designation.</td>
+                </tr>
+                <tr>
+                    <td>primaryBuildingAreaSquareFeet : number</td>
+                    <td>The area of the primary building on the parcel in square feet</td>
+                </tr>
+                <tr>
+                    <td>dwellingType : string</td>
+                    <td>The dwelling type.  Valid entries include:
+                        <ul>
+                            <li>0 &gt;&gt; No dwelling</li>
+                            <li>1 &gt;&gt; Has dwelling</li>
+                        </uL>
+                    </td>
+                </tr>
+                <tr>
+                    <td>totalRoomCount : number</td>
+                    <td>The total number of rooms.</td>
+                </tr>
+                <tr>
+                    <td>fullBathCount : number</td>
+                    <td>The number of full baths.</td>
+                </tr>
+                <tr>
+                    <td>halfBathCount : number</td>
+                    <td>The number of half baths.</td>
+                </tr>
+                <tr>
+                    <td>bedroomCount : number</td>
+                    <td>The number of bedrooms.</td>
+                </tr>
+                <tr>
+                    <td>centralAirStyle : string</td>
+                    <td>The style of central air.  Valid entries include:
+                        <ul>
+                            <li>0 &gt;&gt; None</li>
+                            <li>1 &gt;&gt; Heat</li>
+                            <li>2 &gt;&gt; Heat & Air</li>
+                        </ul>
+                    </td>
+                </tr>
+                <tr>
+                    <td>buildingCondition : string</td>
+                    <td>The building condition.  Valid entries include:
+                        <ul>
+                            <li>V &gt;&gt; Very Good</li>
+                            <li>G &gt;&gt; Good</li>
+                            <li>A &gt;&gt; Average</li>
+                            <li>F &gt;&gt; Fair</li>
+                            <li>P &gt;&gt; Poor</li>
+                        </ul>
+                    </td>
+                </tr>
+                <tr>
+                    <td>hasFireplaces : boolean</td>
+                    <td>True if the parcel contains fireplaces.</td>
+                </tr>
+                <tr>
+                    <td>buildingGrade : string</td>
+                    <td>The grade of the building.  Valid entries include:
+                        <li>A</li>
+                        <li>B</li>
+                        <li>C</li>
+                        <li>D</li>
+                        <li>E</li>
+                    </td>
+                </tr>
+                <tr>
+                    <td>height : string</td>
+                    <td>An indication of the height of the house.  Can be viewed as a "style" of house.*</td>
+                </tr>
+                <tr>
+                    <td>storyCount : number</td>
+                    <td>An indication of the number of stories in the house.  Generally represented as a number of feet.*</td>
+                </tr>
+                <tr>
+                    <td>yearBuilt : string</td>
+                    <td>The year the building was built. Valid entries include:
+                        <ul>
+                            <li>Any calendar year from 1920 to the present year.</li>
+                            <li>“OLD” for buildings remodeled before 1920.</li>
+                            <li>“E 99” where 99 is a valid calendar year for estimated year of remodel</li>
+                        </ul>
+                    </td>
+                </tr>
+                <tr>
+                    <td>propertyType : string</td>
+                    <td>The property type.  Valid entries include:
+                        <ul>
+                            <li>1 &gt;&gt; Vacant log</li>
+                            <li>2 &gt;&gt; Dwelling</li>
+                            <li>3 &gt;&gt; Commercial</li>
+                            <li>4 &gt;&gt; Industrial</li>
+                            <li>5 &gt;&gt; Other</li>
+                        </ul>
+                    </td>
+                </tr>
+                <tr>
+                    <td>wallCode : string</td>
+                    <td>The wall code.  Valid entries include:
+                        <ul>
+                            <li>1 &gt;&gt; Wood or aluminum</li>
+                            <li>2 &gt;&gt; Stucco</li>
+                            <li>3 &gt;&gt; Tile</li>
+                            <li>4 &gt;&gt; Concrete block</li>
+                            <li>5 &gt;&gt; Metal</li>
+                            <li>6 &gt;&gt; Concrete</li>
+                            <li>7 &gt;&gt; Brick</li>
+                            <li>8 &gt;&gt; Stone</li>
+                            <li>91 &gt;&gt; 5/6 frame with 1/6 masonry</li>
+                            <li>92 &gt;&gt; 4/6 frame with 2/6 masonry</li>
+                            <li>93 &gt;&gt; 3/6 frame with 3/6 masonry</li>
+                            <li>94 &gt;&gt; 2/6 frame with 4/6 masonry</li>
+                            <li>95 &gt;&gt; 1/6 frame with 5/6 masonry</li>
+                        </ul>
+                    </td>
+                </tr>
+                <tr>
+                    <td>latitude : number</td>
+                    <td>The latitude of the meter (may correspond to the nearest address, not the meter itself).</td>
+                </tr>
+                <tr>
+                    <td>longitude : number</td>
+                    <td>The latitude of the meter (may correspond to the nearest address, not the meter itself).</td>
+                </tr>
+            </table>
+            <p>* - Some of the details here have been inferred from the data and are not officially documented at the Franklin County Auditor's website.</p>
+        </div>
+
+        <div class="api-method">
+            <h4>list</h4>
+            <p>Get all parcels.</p>
+
+            <h5>Accessing the API</h5>
+            <table>
+                <tr>
+                    <td>URL</td>
+                    <td>/api/v1/parcels?list=1</td>
+                </tr>
+            </table>
+
+            <h5>Inputs (Query String)</h5>
+            <p>None</p>
+
+            <h5>Outputs (Json)</h5>
+            <table>
+                <tr>
+                    <td>parcels : array</td>
+                    <td>An array of parcel objects, as defined in the 'get' response above.</td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="api-method">
+            <h4>search</h4>
+            <p>Get all parcels matching specific criteria.</p>
+
+            <h5>Accessing the API</h5>
+            <table>
+                <tr>
+                    <td>URL</td>
+                    <td>/api/v1/parcels?search=1</td>
+                </tr>
+            </table>
+
+            <h5>Inputs (Query String)</h5>
+            <table>
+                <tr>
+                    <td>radius : number</td>
+                    <td>Radius (in meters) around the below latitude and longitude about which to return results
+                        (inclusive). (Optional)
+                    </td>
+                </tr>
+                <tr>
+                    <td>latitude : number</td>
+                    <td>The latitude to be used as the center for radius-based searching. (Optional)</td>
+                </tr>
+                <tr>
+                    <td>longitude : number</td>
+                    <td>The longitude to be used as the center for radius-based searching. (Optional)</td>
+                </tr>
+                <tr>
+                    <td>street : string</td>
+                    <td>Return parcels with the given street name. Can include wildcards (via '%'). (Optional)</td>
+                </tr>
+                <tr>
+                    <td>max_dwell_duration_greater_than : number</td>
+                    <td>Return parcels whose max dwell duration is than greater than this amount (in minutes)
+                        (inclusive). (Optional)
+                    </td>
+                </tr>
+                <tr>
+                    <td>max_dwell_duration_less_than : number</td>
+                    <td>Return parcels whose max dwell duration is than less than this amount (in minutes) (inclusive).
+                        (Optional)
+                    </td>
+                </tr>
+                <tr>
+                    <td>rate_greater_than : number</td>
+                    <td>Return parcels whose full rate is greater than this amount (in dollars) (inclusive).
+                        (Optional)
+                    </td>
+                </tr>
+                <tr>
+                    <td>rate_less_than : number</td>
+                    <td>Return parcels whose full rate is less than this amount (in dollars) (inclusive). (Optional)
+                    </td>
+                </tr>
+                <tr>
+                    <td>is_handicap : boolean</td>
+                    <td>Return parcels designated as a handicap when set to 1 or not handicap when set to 0.
+                        (Optional)
+                    </td>
+                </tr>
+                <tr>
+                    <td>is_charging_station : boolean</td>
+                    <td>Return parcels designated as a charging station when set to 1 or not charging station when set
+                        to 0. (Optional)
+                    </td>
+                </tr>
+            </table>
+
+            <h5>Outputs (Json)</h5>
+            <table>
+                <tr>
+                    <td>parcels : array</td>
+                    <td>An array of parcel objects, as defined in the 'get' response above.</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <div class="try-it-out">
+        <h3>Try It Out</h3>
+        <p>This section allows you to send a request to the search API using your own query string.
+        <p>
+        <p>For example, look at what you get with the below request then try adding "&amp;is_handicap=1".</p>
+
+        <div class="sample-request">
+            <input id="sample-request-url" type="hidden" value="/api/v1/parcels?search=1"/>
+            <input id="sample-request-data" type="text" value="radius=48&latitude=39.9990&longitude=-83.0076"/><br/>
+            <button id="sample-request-button">Submit</button>
+        </div>
+        <textarea id="sample-response"></textarea>
+    </div>
+</div>
+
+<script src="/js/main.js"></script>
+</body>
+</html>
