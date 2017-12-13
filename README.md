@@ -1,10 +1,12 @@
-# Smart City API - Parking Data
+# Smart City API - Franklin County, Ohio Data
 
 This project provides methods for viewing and accessing parking data.
 Currently, there are APIs for parking meters and parking tickets across the
-Columbus metropolitan area.
+Columbus metropolitan area.  There is also parcel data from the Franklin
+County Auditor's website.
 
-The data used was provided by the city of Columbus, OH for 2016.
+The data used was provided by the city of Columbus, OH for 2016 (parking
+tickets and meters) and 2017 (parcels).
 
 If you are only interested in seeing what this project offers, you can view
 Software Verde-hosted version at:
@@ -15,12 +17,14 @@ Software Verde-hosted version at:
     1. Create the database schema: smart_city_api.
     2. Source sql/init.sql
     3. Source sql/smart-city-api.sql
-    4. Create a mysql user and grant SELECT privileges on smart_city_api.*
-    5. cd api
-    6. Configure your database information in conf/server.conf
-    7. In api/www/example/index.html replace "YOUR_API_KEY" in the googleapis
+    4. Source sql/init-parcels.sql
+    5. Unzip parcels/parcels.zip and source parcels/parcels.sql
+    6. Create a mysql user and grant SELECT privileges on smart_city_api.*
+    7. cd api
+    8. Configure your database information in conf/server.conf
+    9. In api/www/example/index.html replace "YOUR_API_KEY" in the googleapis
         script src to an API key you own.
-    8. ./scripts/make.sh
-    9. ./scripts/run-jar.sh
-    10. Navigate to localhost:8080
+    10. ./scripts/make.sh
+    11. ./scripts/run-jar.sh
+    12. Navigate to http://localhost:8080/
 
