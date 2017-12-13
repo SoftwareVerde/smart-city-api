@@ -384,9 +384,7 @@
             <table>
                 <tr>
                     <td>radius : number</td>
-                    <td>Radius (in meters) around the below latitude and longitude about which to return results
-                        (inclusive). (Optional)
-                    </td>
+                    <td>Radius (in meters) around the below latitude and longitude about which to return results (inclusive). (Optional)</td>
                 </tr>
                 <tr>
                     <td>latitude : number</td>
@@ -397,43 +395,52 @@
                     <td>The longitude to be used as the center for radius-based searching. (Optional)</td>
                 </tr>
                 <tr>
-                    <td>street : string</td>
-                    <td>Return parcels with the given street name. Can include wildcards (via '%'). (Optional)</td>
+                    <td>address : string</td>
+                    <td>Match one of the owner address lines. Can include wildcards (via '%'). (Optional)</td>
                 </tr>
                 <tr>
-                    <td>max_dwell_duration_greater_than : number</td>
-                    <td>Return parcels whose max dwell duration is than greater than this amount (in minutes)
-                        (inclusive). (Optional)
-                    </td>
+                    <td>transfer_date_after : string</td>
+                    <td>Return parcels whose last transfer date is after the provided date (yyyy-MM-dd HH:mm:ss format) (inclusive). (Optional)</td>
                 </tr>
                 <tr>
-                    <td>max_dwell_duration_less_than : number</td>
-                    <td>Return parcels whose max dwell duration is than less than this amount (in minutes) (inclusive).
-                        (Optional)
-                    </td>
+                    <td>transfer_date_before : string</td>
+                    <td>Return parcels whose last transfer date is before the provided date (yyyy-MM-dd HH:mm:ss format) (inclusive). (Optional)</td>
                 </tr>
                 <tr>
-                    <td>rate_greater_than : number</td>
-                    <td>Return parcels whose full rate is greater than this amount (in dollars) (inclusive).
-                        (Optional)
-                    </td>
+                    <td>owner_name : string</td>
+                    <td>Match one of the owner names. Can include wildcards (via '%'). (inclusive). (Optional)</td>
                 </tr>
                 <tr>
-                    <td>rate_less_than : number</td>
-                    <td>Return parcels whose full rate is less than this amount (in dollars) (inclusive). (Optional)
-                    </td>
+                    <td>last_sale_price_greater_than : number</td>
+                    <td>Return parcels whose last sale price is greater than this amount (in dollars) (inclusive). (Optional)</td>
                 </tr>
                 <tr>
-                    <td>is_handicap : boolean</td>
-                    <td>Return parcels designated as a handicap when set to 1 or not handicap when set to 0.
-                        (Optional)
-                    </td>
+                    <td>last_sale_price_less_than : number</td>
+                    <td>Return parcels whose last sale price is less than this amount (in dollars) (inclusive). (Optional)</td>
                 </tr>
                 <tr>
-                    <td>is_charging_station : boolean</td>
-                    <td>Return parcels designated as a charging station when set to 1 or not charging station when set
-                        to 0. (Optional)
-                    </td>
+                    <td>city : string</td>
+                    <td>Return parcels within the provided city. (Optional)</td>
+                </tr>
+                <tr>
+                    <td>zipcode : string</td>
+                    <td>Match on parcel zip code. Can include wildcards (via '%'). (Optional)</td>
+                </tr>
+                <tr>
+                    <td>acreage_greater_than : number</td>
+                    <td>Return parcels whose acreage is greater than this amount (in acres) (inclusive). (Optional)</td>
+                </tr>
+                <tr>
+                    <td>acreage_less_than : number</td>
+                    <td>Return parcels whose acreage is less than this amount (in acres) (inclusive). (Optional)</td>
+                </tr>
+                <tr>
+                    <td>primary_building_area_greater_than : number</td>
+                    <td>Return parcels whose primary building area is greater than this amount (in square feet) (inclusive). (Optional)</td>
+                </tr>
+                <tr>
+                    <td>primary_building_area_less_than : number</td>
+                    <td>Return parcels whose primary building area is less than this amount (in square feet) (inclusive). (Optional)</td>
                 </tr>
             </table>
 
@@ -450,7 +457,7 @@
     <div class="try-it-out">
         <h3>Try It Out</h3>
         <p>This section allows you to send a request to the search API using your own query string.</p>
-        <p>For example, look at what you get with the below request then try adding "&amp;is_handicap=1".</p>
+        <p>For example, look at what you get with the below request then try adding "&amp;last_sale_price_greater_than=5000000".</p>
 
         <div class="sample-request">
             <input id="sample-request-url" type="hidden" value="/api/v1/parcels?search=1"/>
