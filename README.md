@@ -19,12 +19,13 @@ Software Verde-hosted version at:
     3. Source sql/smart-city-api.sql
     4. Source sql/init-parcels.sql
     5. Unzip parcels/parcels.zip and source parcels/parcels.sql
-    6. Create a mysql user and grant SELECT privileges on smart_city_api.*
-    7. cd api
-    8. Configure your database information in conf/server.conf
-    9. In api/www/example/index.html replace "YOUR_API_KEY" in the googleapis
+    6. Source sql/parcels_indexes.sql
+    7. Create a mysql user and grant SELECT privileges on smart_city_api.*
+    8. cd api
+    9. Configure your database information in conf/server.conf
+    10. In api/www/example/index.html replace "YOUR_API_KEY" in the googleapis
         script src to an API key you own.
-    10. ./scripts/make.sh
-    11. ./scripts/run-jar.sh
-    12. Navigate to http://localhost:8080/
+    11. ./scripts/make.sh
+    12. ./scripts/run-jar.sh
+    13. Navigate to http://localhost:8080/
 

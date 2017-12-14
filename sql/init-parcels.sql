@@ -55,14 +55,7 @@ CREATE TABLE parcels (
     property_type VARCHAR(255) NULL,
     wall_code VARCHAR(255) NULL,
     latitude DECIMAL(14, 4) NULL,
-    longitude DECIMAL(14, 4) NULL,
-    INDEX (parcel_id),
-    INDEX (city),
-    INDEX (acreage),
-    INDEX (last_sale_price),
-    INDEX (zipcode),
-    INDEX (latitude),
-    INDEX (longitude)
+    longitude DECIMAL(14, 4) NULL
 ) ENGINE=InnoDB;
 
 -- Unused columns from CSV
