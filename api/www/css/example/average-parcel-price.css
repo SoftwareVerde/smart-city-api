@@ -1,0 +1,96 @@
+html, body {
+    min-height: 100%;
+    width: 100%;
+    min-width: 1000px;
+    margin: 0px;
+}
+
+a, a:visited, a:active {
+    color: #70BF54;
+    text-decoration: none;
+    font-weight: bold;
+}
+a:hover {
+    color: #84DE65;
+}
+
+#home-link, #home-link:visited {
+    margin-left: 1em;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-size: 150%;
+}
+
+#search-map {
+    background-color: grey;
+    height: 400px;
+    width: calc(100% - 20px);
+    margin: 0px 10px;
+    margin-bottom: 25px;
+}
+
+#legend {
+    border: #000 solid thin;
+    background-color: #EBE8DE;
+    color: #000;
+    padding: 1em;
+    overflow: hidden;
+    width: 50%;
+    margin: 0.5em auto;
+}
+
+#legend .color-mapping {
+    display: inline-block;
+    margin: 5px 1.5em;
+}
+
+#legend .color-mapping div {
+    width: 10px;
+    height: 10px;
+    display: inline-block;
+    border: black solid 1px;
+    opacity: 0.25;
+}
+
+#instructions {
+    text-align: center;
+    border-bottom: #000 solid 1px;
+    background-color: #454545;
+    padding: 0.5em;
+
+    width: 50%;
+    margin: 0.5em auto;
+}
+
+.info-text {
+    color: #333;
+}
+
+#loading-screen {
+    position: absolute;
+
+    width: 200px;
+    height: 3em;
+
+    top: 40%;
+    left: calc(50% - 100px);
+
+    text-align: center;
+
+    border: black solid 3px;
+    border-radius: 5px;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: inline-block;
+
+    z-index: 10;
+}
+
+#zip-code-data {
+    position: absolute;
+    margin-top: calc(-4em - 8px); /* accounting for size and padding */
+    margin-left: 10px;
+    background-color: rgba(0, 0, 0, 0.4);
+    border: #000 solid 1px;
+    padding: 4px;
+}
