@@ -1,0 +1,88 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <link rel="stylesheet" href="/css/main.css" />
+    <link rel="stylesheet" href="/css/example/average-parcel-price.css" />
+    <script src="/js/jquery.min.js"></script>
+    <script src="/js/colors.js"></script>
+    <script src="/js/geo.js"></script>
+    <script src="/js/example/average-parcel-price.js"></script>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?v=3&key=YOUR_API_KEY&callback=initMap"></script>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link href="https://fonts.googleapis.com/css?family=Bree+Serif|Roboto+Condensed" rel="stylesheet">
+</head>
+<body>
+<p><a id="home-link" href="/">&larr; Home</a></p>
+
+<h3>Average Parcel Price by Zip Code</h3>
+
+<div id="search-map"></div>
+<div id="zip-code-data"></div>
+
+<div class="column-container">
+    <div id="instructions">
+        <p>Hover over a zip code area to see it's average parcel price.</p>
+    </div>
+    <div id="legend">
+        <div class="title">Legend: Average Parcel Price</div>
+        <div class="color-mapping">
+            <div style="background-color: #00FF00;"></div>
+            &lt; $100,000
+        </div>
+        <div class="color-mapping">
+            <div style="background-color: #44FF00;"></div>
+            &lt; $150,000
+        </div>
+        <div class="color-mapping">
+            <div style="background-color: #88FF00;"></div>
+            &lt; $200,000
+        </div>
+        <div class="color-mapping">
+            <div style="background-color: #BBFF00;"></div>
+            &lt; $250,000
+        </div>
+        <div class="color-mapping">
+            <div style="background-color: #FFFF00;"></div>
+            &lt; $300,000
+        </div>
+        <div class="color-mapping">
+            <div style="background-color: #FFBB00;"></div>
+            &lt; $350,000
+        </div>
+        <div class="color-mapping">
+            <div style="background-color: #FF8800;"></div>
+            &lt; $400,000
+        </div>
+        <div class="color-mapping">
+            <div style="background-color: #FF4400;"></div>
+            &lt; $450,000
+        </div>
+        <div class="color-mapping">
+            <div style="background-color: #FF0000;"></div>
+            &lt; $500,000
+        </div>
+        <div class="color-mapping">
+            <div style="background-color: #BB0000;"></div>
+            &lt; $1,000,000
+        </div>
+        <div class="color-mapping">
+            <div style="background-color: #880000;"></div>
+            &lt; $2,000,000
+        </div>
+        <div class="color-mapping">
+            <div style="background-color: #440000;"></div>
+            &lt; $5,000,000
+        </div>
+        <div class="color-mapping">
+            <div style="background-color: #110000;"></div>
+            &ge; $5,000,000
+        </div>
+    </div>
+</div>
+
+<div id="loading-screen">
+    <p>Loading... <i class="fa fa-spin fa-spinner"></i></p>
+</div>
+</body>
+</html>

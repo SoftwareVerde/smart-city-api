@@ -135,7 +135,7 @@ function getParkingMeterIcon(parkingMeter) {
 }
 
 function findParkingMeters(formData, callbackFunction) {
-    $.post('/api/v1/parking-meters?search=1', formData, function (data) {
+    $.post('/api/v1/parking-meters?search=1', formData, function(data) {
         for (let i in data.parkingMeters) {
             const parkingMeter = data.parkingMeters[i];
             // add marker

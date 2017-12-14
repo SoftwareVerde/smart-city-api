@@ -357,7 +357,7 @@
             </table>
 
             <h5>Inputs (Query String)</h5>
-            <p>None</p>
+            <p>None.</p>
 
             <h5>Outputs (Json)</h5>
             <table>
@@ -449,6 +449,37 @@
                 <tr>
                     <td>parcels : array</td>
                     <td>An array of parcel objects, as defined in the 'get' response above.</td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="api-method">
+            <h4>average_sale_price</h4>
+            <p>Calculates the average of the last_sale_price for the parcels (based on group criteria, if specified).</p>
+
+            <h5>Accessing the API</h5>
+            <table>
+                <tr>
+                    <td>URL</td>
+                    <td>/api/v1/parcels?average_sale_price=1</td>
+                </tr>
+            </table>
+
+            <h5>Inputs (Query String)</h5>
+            <p>None.</p>
+
+            <h5>Outputs (Json)</h5>
+            <table>
+                <tr>
+                    <td>averageSalePrices : json</td>
+                    <td>
+                        A Json object whose keys comprise of zip codes and whose values correspond to the associated zip code's average of last_sale_price.<br />
+                        Ex.
+<pre>"averageSalePrices": {
+    "43220": 123456.78,
+    "43221": 234567.89
+}</pre>
+                    </td>
                 </tr>
             </table>
         </div>
