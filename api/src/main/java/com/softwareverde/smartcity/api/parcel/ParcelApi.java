@@ -2,6 +2,8 @@ package com.softwareverde.smartcity.api.parcel;
 
 import com.softwareverde.database.DatabaseConnection;
 import com.softwareverde.database.DatabaseException;
+import com.softwareverde.database.Query;
+import com.softwareverde.database.Row;
 import com.softwareverde.geo.util.GeoUtil;
 import com.softwareverde.servlet.GetParameters;
 import com.softwareverde.servlet.PostParameters;
@@ -9,6 +11,7 @@ import com.softwareverde.servlet.Servlet;
 import com.softwareverde.servlet.request.Request;
 import com.softwareverde.servlet.response.JsonResponse;
 import com.softwareverde.servlet.response.Response;
+import com.softwareverde.smartcity.api.parcel.response.AverageSalePriceByZipCodeResponse;
 import com.softwareverde.smartcity.api.parcel.response.GetParcelResult;
 import com.softwareverde.smartcity.api.parcel.response.ListParcelsResult;
 import com.softwareverde.smartcity.api.response.JsonResult;
@@ -38,7 +41,8 @@ public class ParcelApi implements Servlet {
         final DatabaseConnection<Connection> databaseConnection;
         try {
             databaseConnection = _environment.database.newConnection();
-        } catch (final DatabaseException databaseException) {
+        }
+        catch (final DatabaseException databaseException) {
             return SmartCityUtil.generateDatabaseErrorResponse(databaseException);
         }
 
@@ -54,7 +58,8 @@ public class ParcelApi implements Servlet {
         if (Util.parseInt(getParameters.get("get")) > 0) {
             try {
                 return _getParcelById(postParameters, databaseConnection);
-            } catch (final DatabaseException databaseException) {
+            }
+            catch (final DatabaseException databaseException) {
                 return SmartCityUtil.generateDatabaseErrorResponse(databaseException);
             }
         }
@@ -67,7 +72,8 @@ public class ParcelApi implements Servlet {
         if (Util.parseInt(getParameters.get("list")) > 0) {
             try {
                 return _listParcels(postParameters, databaseConnection);
-            } catch (final DatabaseException databaseException) {
+            }
+            catch (final DatabaseException databaseException) {
                 return SmartCityUtil.generateDatabaseErrorResponse(databaseException);
             }
         }
@@ -92,7 +98,22 @@ public class ParcelApi implements Servlet {
         if (Util.parseInt(getParameters.get("search")) > 0) {
             try {
                 return _searchForParcel(postParameters, databaseConnection);
-            } catch (final DatabaseException databaseException) {
+            }
+            catch (final DatabaseException databaseException) {
+                return SmartCityUtil.generateDatabaseErrorResponse(databaseException);
+            }
+        }
+
+        /*
+         * Calculate average last-sale-price by zip code.
+         * GET:     average_sale_price[=1]
+         * POST:
+         */
+        if (Util.parseInt(getParameters.get("average_sale_price")) > 0) {
+            try {
+                return _calculateAverageSalePriceByZipCode(postParameters, databaseConnection);
+            }
+            catch (final DatabaseException databaseException) {
                 return SmartCityUtil.generateDatabaseErrorResponse(databaseException);
             }
         }
@@ -164,6 +185,19 @@ public class ParcelApi implements Servlet {
         final ListParcelsResult jsonResult = new ListParcelsResult();
         for (final Parcel parcel : locationFilteredParcels) {
             jsonResult.addParcel(parcel);
+        }
+
+        return new JsonResponse(Response.ResponseCodes.OK, jsonResult);
+    }
+
+    private Response _calculateAverageSalePriceByZipCode(final PostParameters postParameters, final DatabaseConnection<Connection> databaseConnection) throws DatabaseException {
+        final List<Row> rows = databaseConnection.query(new Query("SELECT AVG(last_sale_price) AS average_sale_price, zipcode AS zip_code FROM parcels WHERE last_sale_price > 5000 AND zipcode IS NOT NULL GROUP BY zip_code ORDER BY average_sale_price ASC"));
+
+        final AverageSalePriceByZipCodeResponse jsonResult = new AverageSalePriceByZipCodeResponse();
+        for (final Row row : rows) {
+            final String zipCode = row.getString("zip_code");
+            final Double averageSalePrice = row.getDouble("average_sale_price");
+            jsonResult.setAverageSalePrice(zipCode, averageSalePrice);
         }
 
         return new JsonResponse(Response.ResponseCodes.OK, jsonResult);

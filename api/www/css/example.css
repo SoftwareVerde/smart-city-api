@@ -5,6 +5,14 @@ html, body {
     margin: 0px;
 }
 
+a, a:visited, a:active {
+    color: #70BF54;
+    text-decoration: none;
+    font-weight: bold;
+}
+a:hover {
+    color: #84DE65;
+}
 
 h1, h2, h3, h4, h5, h6 {
     font-size: 150%;
@@ -23,7 +31,6 @@ legend {
 
 #home-link, #home-link:visited {
     margin-left: 1em;
-    color: #46F;
 }
 
 #search-map {
